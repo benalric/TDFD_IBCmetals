@@ -63,14 +63,14 @@ library(adiv)
 # Load functions
 Load functions at the following link:
 ```{r, eval = FALSE}
-setwd("C:/Users/benjamin/Desktop") # CHANGE ME to where you want functions' file to be load
+setwd("C:/Users/benjamin/Documents/TDFD_IBCmetals/functions") # CHANGE ME to where you want functions' file to be load
 source("TDFD_IBC_functions.R")
 ```
 
 # Data import
 Download data at the following link:
 ```{r, eval = FALSE}
-setwd("C:/Users/benjamin/Desktop") # CHANGE ME to where you want data's file to be load
+setwd("C:/Users/benjamin/Documents/TDFD_IBCmetals/data") # CHANGE ME to where you want data's file to be load
 load("TDFD_IBC_data.RData")
 ```
 
