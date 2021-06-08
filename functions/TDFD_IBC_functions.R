@@ -1,11 +1,12 @@
-# ====================================================================================== #
-#                                                                                        #
-# Functions to measure and test the alpha functional diversity                           #
-# Alpha functional diversity is defined as:                                              # 
-# - the Rao's quadratic entropy (Rao 1982)                                               #
-# - the functional dispersion (FDis, Laliberté & Legendre (Ecology, 2010))               #
-#                                                                                        #
-# ====================================================================================== #
+# ====================================================================== #
+#                                                                        #
+# Functions to measure and test the alpha and beta diversity             #
+# Alpha functional diversity is defined as:                              # 
+# - the Rao's quadratic entropy (Rao 1982)                               #
+# Beta taxonomic diversity is decomposed according to:                   #
+# - the framework of Baselga [Global Ecol. Biogeogr. 19, 134-143 (2010)] #
+#                                                                        #
+# ====================================================================== #
 
 
 # ======================================== TABLE OF CONTENTS ======================================== #  
@@ -25,7 +26,6 @@
 # - taxa: a community matrix (C x S) with C samples (or communities) as rows, and S species as columns
 # - site: a vector corresponding to the names of sites
 # - method: whether "BR" method is used, Bray Curtis dissimilarity index is computes from abundance data; and whether "SOR" is used, sorensen dissimilarity index is computes from incidence data
-# - model: "FF" is used, fixed-fixed null model is computes; and whetehr "FE" is used, fixed-equiprobable null model is computes
 # - nrepet: the number of repetition of the null model
 #
 # Lets 'res.beta' be the ouput as a list of values:
@@ -139,7 +139,7 @@ betadiv <- function(taxa, site, method = "BR", nrepet = 999) {
 
 #--------------------------------------------------------------------#
 ## 02. Function to calculate the functional diversity from the Rao's quandratic entropy
-##     Formule of Rao's index from Champely & Chessel (Env.Ecol.Stat. 2002)
+##     Formule of Rao's index from Champely & Chessel [Environ. Ecol. Stat. 9, 167-177 (2002)]
 
 ## WARNING ##
 ## This function gives similar results that function divc in ade4
