@@ -29,7 +29,7 @@ knitr::opts_knit$set(width=75)
 # Aims
 In this repository, you will find the tutotrial reporting the code to reproduce the analyses and figures carried out in Alric *et al.* (2021). The scope of this tutorial is to increase its reproducibility, clarity, transparency and dissemination. Data analysis was done using R version 3.6.3. This documatn was compiled with the *rmarkdown* package version 2.8. This tutorial is licensed under CC BY-NC-ND 4.0, which means you are free to share, copy and redistribute this tutorial in any medium or format under the terms of attribution of appropriate credit, non-commercial purposes and no derivatives. The citation is:
 
-> Alric B., O. Geffard, A. Chaumot. Sepcies replacement associated with loawer richness but unchanged functional diversity of invertebrate communities in metal-contaminated streams.
+> Alric B., O. Geffard, A. Chaumot. Sepcies replacement associated with lower richness but unchanged functional diversity of invertebrate communities in metal-contaminated streams.
 
 # Software preparation
 Install R (https://www.r-project.org) (R Core Team 2020) if you do not have it already.
@@ -442,9 +442,9 @@ predicted_rq_shannon <- data.frame(IBCmetals = TDFD_IBC_res$TDFD_metrics$IBCmeta
 pv_fit_rq <- summary(fit_rq_shannon, se = "boot")$coefficients["IBCmetals", "Pr(>|t|)"] # p.value = 0.0126
 
 # Plot of the Shannon index against metal contamionation gradient
-TDFD_IBC_res$TDFD_metrics$color[TDFD_res$color == "#000000"] <- "#FFFFFF"
+TDFD_IBC_res$TDFD_metrics$color[TDFD_IBC_res$TDFD_metrics$color == "#000000"] <- "#FFFFFF"
 par(mar = c(5, 0, 3, 5))
-Fig1B <- ggplot(TDFD_res, aes(x = IBCmetals, y = N1b2)) +
+Fig1B <- ggplot(TDFD_IBC_res$TDFD_metrics, aes(x = IBCmetals, y = N1b2)) +
   geom_point(shape = 1, size = 4, color = TDFD_IBC_res$TDFD_metrics$color) +
   geom_point(shape = 19, size = 1.5) + 
   geom_line(color = "black", data = predicted_rq_shannon, aes(x = IBCmetals, y = pred)) +
@@ -536,7 +536,7 @@ Fig1 <- plot_spacer() + Fig1A + plot_spacer() + Fig1B + Fig1C +
   plot_layout(design = design, widths = c(0.5, 0.5), heights = c(0.5, 0.5, 0.5))
 
 # Save as tiff file Fig1 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_Fig1.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 print(Fig1)
@@ -699,7 +699,7 @@ Fig2 <- gplot.pcoa +
   annotation_custom(grob = ggplotGrob(legendFG), xmin = -6.5, ymin = -7, xmax = -6.8, ymax = -2.8)
 
 # Save as tiff file Fig.2 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_Fig2.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 print(Fig2)
@@ -713,7 +713,7 @@ sac1 <- specaccum(TDFD_IBC_data$abundance[ ,-c(1:8)], method = "exact", gamma = 
 sac2 <- specaccum(TDFD_IBC_data$abundance[ ,-c(1:8)], method = "random", gama = "jack1", permutations = 9999)
 
 # Save as tiff file Fig.S1 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS1.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 plot(sac2, ci.type = "poly", lwd = 2, ci.lty = 0, ci.col = "lightgray", ylab = "Species", las = 1)
@@ -859,7 +859,7 @@ FigS2 <- gplot1 + gplot3 + gplot2 + gplotall +
   plot_layout(design = design, widths = c(1, 1, 1, 1), heights = c(1, 1, 1, 1))
 
 # Save as tiff file Fig.S2 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS2.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 print(FigS2)
@@ -977,7 +977,7 @@ FigS3 <- scarcity.g1 + scarcity.g3 +
   plot_layout(design = design, widths = c(1, 1), heights = c(1, 1))
 
 # Save as tiff file Fig.S3 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS3.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 print(FigS3)
@@ -1024,7 +1024,7 @@ FigS4 <- gdend +
   annotate(geom = "text", x = 3, y = -5.8, label = "FG10")
 
 # Save as tiff file Fig.S4 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS4.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 print(FigS4)
@@ -1039,7 +1039,7 @@ mrpp1 <- mrpp(e.dist, fac)
 summary(mrpp1)
 
 # Save as tiff file Fig.S5 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS5.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 with(mrpp1, {
@@ -1202,7 +1202,7 @@ FigS6 <- ggplot(table_tot, aes(x = as.factor(id.modality), y = value)) +
   ylim(0, 1)
 
 # Save as tiff file Fig.S6 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS6.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 print(FigS6)
@@ -1246,7 +1246,7 @@ FigS7 <- ggplot(table_percent, aes(x = group, y = values)) +
   facet_grid(. ~ analysis)
 
 # Save as tiff file Fig.S7 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS7.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 print(FigS7)
@@ -1272,7 +1272,7 @@ aov.FDis.posthoc <- TukeyHSD(aov.FDis)
 table_FD$posthoc.FDis <- "a"
 
 # Save as tiff file Fig.S8 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS8.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 par(mar = c(5, 5, 3, 5))
@@ -1310,7 +1310,7 @@ summary(lm1)
 coeff.lm1 <- coefficients(lm1)
 
 # Save as tiff file Fig.S9 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures/analysis_trait_x_IBCmet" # CHANGE ME to where you want figure to be saved
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS9.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 par(mar = c(5, 5, 4, 2))
