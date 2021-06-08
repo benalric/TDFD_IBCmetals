@@ -4,4 +4,4 @@ In this repository, you will find the tutotrial reporting the code to reproduce 
 
 > Alric B., O. Geffard, A. chaumot. Sepcies replacement associated with loawer richness but unchaged functional diversity of invertebrate communities in metal-contaminated streams.
 
-Step by step instructions on the tutorial can be found [here](https://benalric.github.io/TDFD_IBCmetals/).
+Step-by-step instructions of the tutorial can be found [here](https://benalric.github.io/TDFD_IBCmetals/).
