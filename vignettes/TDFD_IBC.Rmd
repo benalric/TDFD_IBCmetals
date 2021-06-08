@@ -32,7 +32,7 @@ In this repository, you will find the tutotrial reporting the code to reproduce 
 > Alric B., O. Geffard, A. Chaumot. Sepcies replacement associated with loawer richness but unchaged functional diversity of invertebrate communities in metal-contaminated streams.
 
 # Software preparation
-Install R ([https://www.r-project.org]) (R Core Team 2020) if you do not have it already.
+Install R (https://www.r-project.org) (R Core Team 2020) if you do not have it already.
 Then, install and load the following packages.
 
 ```{r, eval = TRUE}
