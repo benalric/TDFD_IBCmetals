@@ -7,7 +7,7 @@
 
         <meta name="author" content="Benjamin Alric" />
     
-        <meta name="date" content="2021-06-08" />
+        <meta name="date" content="2021-06-17" />
     
     <title>Tutorial for analysis of taxonomic and functional diversdity in relation to metal contamination</title>
 
@@ -195,7 +195,7 @@
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Benjamin Alric</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-06-08</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-06-17</p>
           </div>
    </div>
    
@@ -336,7 +336,7 @@ betaIBC.SOR.FF &lt;-<span class="st"> </span><span class="kw">betadiv</span>(<sp
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">abun_subg &lt;-<span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance[<span class="op">!</span>(TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Intermed&quot;</span> <span class="op">|</span><span class="st"> </span>
 <span class="st">    </span>TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont2&quot;</span>), ]
 abun_subg.<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(abun_subg[, <span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)])
-<span class="kw">rownames</span>(abun_subg.<span class="dv">1</span>) &lt;-<span class="st"> </span>abun_subg<span class="op">$</span>cd_opecont
+<span class="kw">rownames</span>(abun_subg.<span class="dv">1</span>) &lt;-<span class="st"> </span><span class="kw">paste</span>(abun_subg<span class="op">$</span>cd_opecont, abun_subg<span class="op">$</span>group, <span class="dt">sep =</span> <span class="st">&quot;_&quot;</span>)
 abun_subg.<span class="dv">1</span> &lt;-<span class="st"> </span>abun_subg.<span class="dv">1</span>[, <span class="op">!</span>(<span class="kw">colSums</span>(abun_subg.<span class="dv">1</span>) <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)]
 abun_subg.relative &lt;-<span class="st"> </span><span class="kw">sweep</span>(abun_subg.<span class="dv">1</span>, <span class="dv">1</span>, <span class="kw">rowSums</span>(abun_subg.<span class="dv">1</span>), <span class="st">&quot;/&quot;</span>)
 abun_subg_tidy &lt;-<span class="st"> </span><span class="kw">matrix_to_stack</span>(abun_subg.relative, <span class="st">&quot;value&quot;</span>, <span class="st">&quot;site&quot;</span>, <span class="st">&quot;species&quot;</span>)
@@ -344,44 +344,64 @@ abun_subg_tidy &lt;-<span class="st"> </span>abun_subg_tidy[<span class="kw">whi
 abun_subg_tidy<span class="op">$</span>site &lt;-<span class="st"> </span><span class="kw">as.character</span>(abun_subg_tidy<span class="op">$</span>site)
 abun_subg_tidy<span class="op">$</span>species &lt;-<span class="st"> </span><span class="kw">as.character</span>(abun_subg_tidy<span class="op">$</span>species)
 Si.tidy &lt;-<span class="st"> </span><span class="kw">scarcity_stack</span>(<span class="dt">com_df =</span> abun_subg_tidy, <span class="dt">sp_col =</span> <span class="st">&quot;species&quot;</span>, <span class="dt">com =</span> <span class="st">&quot;site&quot;</span>, 
-    <span class="dt">abund =</span> <span class="st">&quot;value&quot;</span>)</code></pre></div>
+    <span class="dt">abund =</span> <span class="st">&quot;value&quot;</span>)
+Si.tidy &lt;-<span class="st"> </span>Si.tidy <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">cd_site =</span> <span class="kw">gsub</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">_.*&quot;</span>, <span class="st">&quot;&quot;</span>, Si.tidy<span class="op">$</span>site)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">group =</span> <span class="kw">gsub</span>(<span class="st">&quot;.*</span><span class="ch">\\</span><span class="st">_&quot;</span>, 
+    <span class="st">&quot;&quot;</span>, Si.tidy<span class="op">$</span>site)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span><span class="kw">c</span>(site)) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">abundance =</span> value) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">site =</span> cd_site) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">relocate</span>(site, species, group, abundance, Si)</code></pre></div>
 </div>
 <div id="computation-of-functional-contribution-and-originality-of-each-species-to-the-total-volume-of-the-trait-space" class="section level1">
 <h1><span class="header-section-number">11</span> Computation of functional contribution and originality of each species to the total volume of the trait space</h1>
 <div id="data-preparation" class="section level2">
 <h2><span class="header-section-number">11.1</span> Data preparation</h2>
+<table>
+<colgroup>
+<col width="100%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"><span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>WARNING:</strong> Please go to the Figure 2 section to see how group-specific taxa (i.e., taxa.Si.G1, taxa.Si.G3, taxa.Si.common) were estimated</td>
+</tr>
+<tr class="even">
+<td align="left"><span></td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create name vector for taxa either specifc to UnCont1 and Cont or commun to</span>
 <span class="co"># both</span>
-taxa_G1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Euleuctra&quot;</span>, <span class="st">&quot;Perla&quot;</span>, <span class="st">&quot;Silo&quot;</span>, <span class="st">&quot;Cheumatopsyche&quot;</span>, <span class="st">&quot;Lepidostoma&quot;</span>, <span class="st">&quot;Limnephilinae&quot;</span>, 
+taxa.Si.G1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Euleuctra&quot;</span>, <span class="st">&quot;Perla&quot;</span>, <span class="st">&quot;Silo&quot;</span>, <span class="st">&quot;Cheumatopsyche&quot;</span>, <span class="st">&quot;Lepidostoma&quot;</span>, <span class="st">&quot;Limnephilinae&quot;</span>, 
     <span class="st">&quot;Odontocerum&quot;</span>, <span class="st">&quot;Polycentropus&quot;</span>, <span class="st">&quot;Rhyacophila&quot;</span>, <span class="st">&quot;Sericostoma&quot;</span>, <span class="st">&quot;Ecdyonurus&quot;</span>, <span class="st">&quot;Habroleptoides&quot;</span>, 
     <span class="st">&quot;Habrophlebia&quot;</span>, <span class="st">&quot;Aphelocheirus&quot;</span>, <span class="st">&quot;Normandia&quot;</span>, <span class="st">&quot;Riolus&quot;</span>, <span class="st">&quot;Limoniidae&quot;</span>, <span class="st">&quot;Sisyra&quot;</span>, 
     <span class="st">&quot;Orconectes&quot;</span>, <span class="st">&quot;Bithynia&quot;</span>, <span class="st">&quot;Radix&quot;</span>, <span class="st">&quot;Theodoxus&quot;</span>)
-taxa_G3 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Protonemura&quot;</span>, <span class="st">&quot;Ecnomus&quot;</span>, <span class="st">&quot;Goera&quot;</span>, <span class="st">&quot;Hydroptila&quot;</span>, <span class="st">&quot;Oecetis&quot;</span>, <span class="st">&quot;Psychomyia&quot;</span>, 
+taxa.Si.G3 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Protonemura&quot;</span>, <span class="st">&quot;Ecnomus&quot;</span>, <span class="st">&quot;Goera&quot;</span>, <span class="st">&quot;Hydroptila&quot;</span>, <span class="st">&quot;Oecetis&quot;</span>, <span class="st">&quot;Psychomyia&quot;</span>, 
     <span class="st">&quot;Leptophlebiidae&quot;</span>, <span class="st">&quot;Micronecta&quot;</span>, <span class="st">&quot;Stenelmis&quot;</span>, <span class="st">&quot;Empididae&quot;</span>, <span class="st">&quot;Tabanidae&quot;</span>, <span class="st">&quot;Onychogomphus&quot;</span>, 
     <span class="st">&quot;Physella&quot;</span>)
-taxa_common &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Gammarus&quot;</span>, <span class="st">&quot;Chironomidae&quot;</span>, <span class="st">&quot;Corbicula&quot;</span>, <span class="st">&quot;Asellidae&quot;</span>, <span class="st">&quot;Echinogammarus&quot;</span>, 
+taxa.Si.common &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Gammarus&quot;</span>, <span class="st">&quot;Chironomidae&quot;</span>, <span class="st">&quot;Corbicula&quot;</span>, <span class="st">&quot;Asellidae&quot;</span>, <span class="st">&quot;Echinogammarus&quot;</span>, 
     <span class="st">&quot;Baetis&quot;</span>, <span class="st">&quot;Elmis&quot;</span>, <span class="st">&quot;Hydropsyche&quot;</span>, <span class="st">&quot;Esolus&quot;</span>, <span class="st">&quot;Caenis&quot;</span>, <span class="st">&quot;Athericidae&quot;</span>, <span class="st">&quot;Ancylus&quot;</span>, 
     <span class="st">&quot;Ithytrichia&quot;</span>, <span class="st">&quot;Simuliidae&quot;</span>, <span class="st">&quot;Limnius&quot;</span>, <span class="st">&quot;Potamopyrgus&quot;</span>, <span class="st">&quot;Physa&quot;</span>, <span class="st">&quot;Calopteryx&quot;</span>, 
     <span class="st">&quot;Ephemera&quot;</span>, <span class="st">&quot;Ephemerella&quot;</span>, <span class="st">&quot;Pisidium&quot;</span>, <span class="st">&quot;Oulimnius&quot;</span>, <span class="st">&quot;Heptagenia&quot;</span>, <span class="st">&quot;Procloeon&quot;</span>, 
-    <span class="st">&quot;Leuctra&quot;</span>, <span class="st">&quot;Platycnemis&quot;</span>, <span class="st">&quot;Pomatinus&quot;</span>, <span class="st">&quot;Brachycentrus&quot;</span>)
-
-<span class="co"># Abundance tables to estimate the contribution of each species to the trait</span>
+    <span class="st">&quot;Leuctra&quot;</span>, <span class="st">&quot;Platycnemis&quot;</span>, <span class="st">&quot;Pomatinus&quot;</span>, <span class="st">&quot;Brachycentrus&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Abundance tables to estimate the contribution of each species to the trait</span>
 <span class="co"># space occupied by the community</span>
 comm_UnCont1_contrib &lt;-<span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance[TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> </span>
-<span class="st">    &quot;UnCont1&quot;</span>, <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa_G1 <span class="op">|</span><span class="st"> </span><span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_common]
+<span class="st">    &quot;UnCont1&quot;</span>, <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa.Si.G1 <span class="op">|</span><span class="st"> </span><span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>
+<span class="st">    </span>taxa.Si.common]
 comm_Cont_contrib &lt;-<span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance[TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>, 
-    <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa_G3 <span class="op">|</span><span class="st"> </span><span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>
-<span class="st">        </span>taxa_common]
+    <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa.Si.G3 <span class="op">|</span><span class="st"> </span><span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>
+<span class="st">        </span>taxa.Si.common]
 
 <span class="co"># Abundance tables to estimate the beta functional diversity</span>
 comm_UnCont1_Eq &lt;-<span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance[TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>, 
-    <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa_G1]
+    <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa.Si.G1]
 comm_Cont_Eq &lt;-<span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance[TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>, 
-    <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa_G3]
+    <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa.Si.G3]
 comm_UnCont1_Cont_Eq &lt;-<span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance[TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> </span>
 <span class="st">    &quot;UnCont1&quot;</span> <span class="op">|</span><span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>, <span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_G1 <span class="op">|</span><span class="st"> </span><span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa_G3]
+<span class="st">    </span>taxa.Si.G1 <span class="op">|</span><span class="st"> </span><span class="kw">colnames</span>(TDFD_IBC_data<span class="op">$</span>abundance) <span class="op">%in%</span><span class="st"> </span>taxa.Si.G3]
 comm_UnCont1_Cont_Eq &lt;-<span class="st"> </span>comm_UnCont1_Cont_Eq[, <span class="kw">colSums</span>(comm_UnCont1_Cont_Eq) <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>]
 
 <span class="co"># Trait tables for contribution analysis</span>
@@ -513,15 +533,15 @@ contrib1_Cont &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<
 
 <span class="co"># Mean contribution</span>
 contrib_mean_UnCont1 &lt;-<span class="st"> </span><span class="kw">mean</span>(contrib1_UnCont1<span class="op">$</span>contribution[contrib1_UnCont1<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_G1])
+<span class="st">    </span>taxa.Si.G1])
 contrib_mean_common_UnCont1 &lt;-<span class="st"> </span><span class="kw">mean</span>(contrib1_UnCont1<span class="op">$</span>contribution[contrib1_UnCont1<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_common])
+<span class="st">    </span>taxa.Si.common])
 contrib_mean_UnCont1_perct &lt;-<span class="st"> </span>(contrib_mean_UnCont1 <span class="op">*</span><span class="st"> </span><span class="dv">100</span>)<span class="op">/</span>(contrib_mean_common_UnCont1 <span class="op">+</span><span class="st"> </span>
 <span class="st">    </span>contrib_mean_UnCont1)
 
-contrib_mean_Cont &lt;-<span class="st"> </span><span class="kw">mean</span>(contrib1_Cont<span class="op">$</span>contribution[contrib1_Cont<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa_G3])
+contrib_mean_Cont &lt;-<span class="st"> </span><span class="kw">mean</span>(contrib1_Cont<span class="op">$</span>contribution[contrib1_Cont<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa.Si.G3])
 contrib_mean_common_Cont &lt;-<span class="st"> </span><span class="kw">mean</span>(contrib1_UnCont1<span class="op">$</span>contribution[contrib1_Cont<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_common])
+<span class="st">    </span>taxa.Si.common])
 contrib_mean_Cont_perct &lt;-<span class="st"> </span>(contrib_mean_Cont <span class="op">*</span><span class="st"> </span><span class="dv">100</span>)<span class="op">/</span>(contrib_mean_common_Cont <span class="op">+</span><span class="st"> </span>
 <span class="st">    </span>contrib_mean_Cont)
 
@@ -549,13 +569,13 @@ orig1_Cont &lt;-<span class="st"> </span><span class="ot">NULL</span>
 orig1_Cont &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">taxa =</span> <span class="kw">colnames</span>(comm_Cont_contrib), <span class="dt">orig =</span> orig1_Cont)
 
 <span class="co"># Mean originality</span>
-orig_mean_UnCont1 &lt;-<span class="st"> </span><span class="kw">mean</span>(orig1_UnCont1<span class="op">$</span>orig[orig1_UnCont1<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa_G1])
-orig_mean_common_UnCont1 &lt;-<span class="st"> </span><span class="kw">mean</span>(orig1_UnCont1<span class="op">$</span>orig[orig1_UnCont1<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa_common])
+orig_mean_UnCont1 &lt;-<span class="st"> </span><span class="kw">mean</span>(orig1_UnCont1<span class="op">$</span>orig[orig1_UnCont1<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa.Si.G1])
+orig_mean_common_UnCont1 &lt;-<span class="st"> </span><span class="kw">mean</span>(orig1_UnCont1<span class="op">$</span>orig[orig1_UnCont1<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa.Si.common])
 orig_mean_UnCont1_perct &lt;-<span class="st"> </span>(orig_mean_UnCont1 <span class="op">*</span><span class="st"> </span><span class="dv">100</span>)<span class="op">/</span>(orig_mean_common_UnCont1 <span class="op">+</span><span class="st"> </span>
 <span class="st">    </span>orig_mean_UnCont1)
 
-orig_mean_Cont &lt;-<span class="st"> </span><span class="kw">mean</span>(orig1_Cont<span class="op">$</span>orig[orig1_Cont<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa_G3])
-orig_mean_common_Cont &lt;-<span class="st"> </span><span class="kw">mean</span>(orig1_Cont<span class="op">$</span>orig[orig1_Cont<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa_common])
+orig_mean_Cont &lt;-<span class="st"> </span><span class="kw">mean</span>(orig1_Cont<span class="op">$</span>orig[orig1_Cont<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa.Si.G3])
+orig_mean_common_Cont &lt;-<span class="st"> </span><span class="kw">mean</span>(orig1_Cont<span class="op">$</span>orig[orig1_Cont<span class="op">$</span>taxa <span class="op">%in%</span><span class="st"> </span>taxa.Si.common])
 orig_mean_Cont_perct &lt;-<span class="st"> </span>(orig_mean_Cont <span class="op">*</span><span class="st"> </span><span class="dv">100</span>)<span class="op">/</span>(orig_mean_common_Cont <span class="op">+</span><span class="st"> </span>orig_mean_Cont)
 
 <span class="co"># Building table with fucntional contribution and funcitonal originality</span>
@@ -740,11 +760,7 @@ abun_ibc.tidy &lt;-<span class="st"> </span>abun_ibc.tidy[abun_ibc.tidy<span cla
 abun_ibc.tidy.G1 &lt;-<span class="st"> </span>abun_ibc.tidy[abun_ibc.tidy<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>, ]
 abun_ibc.tidy.G3 &lt;-<span class="st"> </span>abun_ibc.tidy[abun_ibc.tidy<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>, ]
 
-<span class="co"># Identify specific taxa to Uncont1 and Cont and common to both</span>
-taxa_G1 &lt;-<span class="st"> </span><span class="kw">setdiff</span>(<span class="kw">unique</span>(abun_ibc.tidy.G1<span class="op">$</span>taxa), <span class="kw">unique</span>(abun_ibc.tidy.G3<span class="op">$</span>taxa))
-taxa_G3 &lt;-<span class="st"> </span><span class="kw">setdiff</span>(<span class="kw">unique</span>(abun_ibc.tidy.G3<span class="op">$</span>taxa), <span class="kw">unique</span>(abun_ibc.tidy.G1<span class="op">$</span>taxa))
-taxa_common &lt;-<span class="st"> </span><span class="kw">intersect</span>(<span class="kw">unique</span>(abun_ibc.tidy.G1<span class="op">$</span>taxa), <span class="kw">unique</span>(abun_ibc.tidy.G3<span class="op">$</span>taxa))
-
+<span class="co"># Harmonization of scarcity tidy table</span>
 Si_global &lt;-<span class="st"> </span>Si.tidy <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">group.site =</span> <span class="kw">ifelse</span>(Si.tidy<span class="op">$</span>site <span class="op">%in%</span><span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>cd_opecont[TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> </span>
 <span class="st">    &quot;UnCont1&quot;</span>], <span class="st">&quot;UnCont1&quot;</span>, <span class="kw">ifelse</span>(Si.tidy<span class="op">$</span>site <span class="op">%in%</span><span class="st"> </span>TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>cd_opecont[TDFD_IBC_data<span class="op">$</span>abundance<span class="op">$</span>group <span class="op">==</span><span class="st"> </span>
 <span class="st">    &quot;Cont&quot;</span>], <span class="st">&quot;Cont&quot;</span>, <span class="ot">NA</span>))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">inverse.Si =</span> <span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Si.tidy<span class="op">$</span>Si) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(species, 
@@ -754,29 +770,25 @@ Si_global &lt;-<span class="st"> </span>Si_global <span class="op">%&gt;%</span>
 <span class="st">    </span>TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>species[TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>group_site <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>], 
     <span class="st">&quot;#6699FF&quot;</span>, <span class="kw">ifelse</span>(Si_global<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>species[TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>group_site <span class="op">==</span><span class="st"> </span>
 <span class="st">        &quot;Cont&quot;</span>], <span class="st">&quot;#FF6666&quot;</span>, <span class="kw">ifelse</span>(Si_global<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>species[TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>group_site <span class="op">==</span><span class="st"> </span>
-<span class="st">        &quot;Common&quot;</span>], <span class="st">&quot;#999999&quot;</span>, <span class="ot">NA</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">occurrence =</span> <span class="kw">ifelse</span>(Si_global<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>species[TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>group_site <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>], 
-    <span class="st">&quot;UnCont1&quot;</span>, <span class="kw">ifelse</span>(Si_global<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>species[TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>group_site <span class="op">==</span><span class="st"> </span>
-<span class="st">        &quot;Cont&quot;</span>], <span class="st">&quot;Cont&quot;</span>, <span class="kw">ifelse</span>(Si_global<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>species[TDFD_IBC_data<span class="op">$</span>info_species<span class="op">$</span>group_site <span class="op">==</span><span class="st"> </span>
-<span class="st">        &quot;Common&quot;</span>], <span class="st">&quot;Common&quot;</span>, <span class="ot">NA</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(Si) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>()
+<span class="st">        &quot;Common&quot;</span>], <span class="st">&quot;#999999&quot;</span>, <span class="ot">NA</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(Si) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>()
 
-<span class="co"># Select taxa specific to UnCont1 with value &gt; to 75th percentile</span>
+<span class="co"># Select taxa specific to UnCont1 with value &gt; to 40th percentile</span>
 Si.G1 &lt;-<span class="st"> </span>Si_global[Si_global<span class="op">$</span>group.site <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>, ]
 Si.G1<span class="op">$</span>species &lt;-<span class="st"> </span><span class="kw">factor</span>(Si.G1<span class="op">$</span>species, <span class="dt">levels =</span> Si.G1<span class="op">$</span>species)
-Si.G1.75perc &lt;-<span class="st"> </span>Si.G1[Si.G1<span class="op">$</span>Si <span class="op">&gt;=</span><span class="st"> </span><span class="kw">quantile</span>(Si.G1<span class="op">$</span>Si, <span class="dt">probs =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>))[<span class="dv">5</span>], 
+Si.G1.40perc &lt;-<span class="st"> </span>Si.G1[Si.G1<span class="op">$</span>Si <span class="op">&gt;=</span><span class="st"> </span><span class="kw">quantile</span>(Si.G1<span class="op">$</span>Si, <span class="dt">probs =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>))[<span class="dv">5</span>], 
     ]
 
-<span class="co"># Select taxa specific to Cont with scarcity &gt; to 75th percentile</span>
+<span class="co"># Select taxa specific to Cont with scarcity &gt; to 40th percentile</span>
 Si.G3 &lt;-<span class="st"> </span>Si_global[Si_global<span class="op">$</span>group.site <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>, ]
 Si.G3<span class="op">$</span>species &lt;-<span class="st"> </span><span class="kw">factor</span>(Si.G3<span class="op">$</span>species, <span class="dt">levels =</span> Si.G3<span class="op">$</span>species)
-Si.G3.75perc &lt;-<span class="st"> </span>Si.G3[Si.G3<span class="op">$</span>Si <span class="op">&gt;=</span><span class="st"> </span><span class="kw">quantile</span>(Si.G3<span class="op">$</span>Si, <span class="dt">probs =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>))[<span class="dv">5</span>], 
+Si.G3.40perc &lt;-<span class="st"> </span>Si.G3[Si.G3<span class="op">$</span>Si <span class="op">&gt;=</span><span class="st"> </span><span class="kw">quantile</span>(Si.G3<span class="op">$</span>Si, <span class="dt">probs =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>))[<span class="dv">5</span>], 
     ]
 
 <span class="co"># Identify specific taxa to Uncont1 and Cont and common to both with scarcity &gt;</span>
-<span class="co"># to 75th percentile</span>
-taxa.Si.G1 &lt;-<span class="st"> </span><span class="kw">setdiff</span>(Si.G1.75perc<span class="op">$</span>species, Si.G3.75perc<span class="op">$</span>species)
-taxa.Si.G3 &lt;-<span class="st"> </span><span class="kw">setdiff</span>(Si.G3.75perc<span class="op">$</span>species, Si.G1.75perc<span class="op">$</span>species)
-taxa.Si.common &lt;-<span class="st"> </span><span class="kw">intersect</span>(Si.G3.75perc<span class="op">$</span>species, Si.G1.75perc<span class="op">$</span>species)
+<span class="co"># to 40th percentile</span>
+taxa.Si.G1 &lt;-<span class="st"> </span><span class="kw">setdiff</span>(Si.G1.40perc<span class="op">$</span>species, Si.G3.40perc<span class="op">$</span>species)
+taxa.Si.G3 &lt;-<span class="st"> </span><span class="kw">setdiff</span>(Si.G3.40perc<span class="op">$</span>species, Si.G1.40perc<span class="op">$</span>species)
+taxa.Si.common &lt;-<span class="st"> </span><span class="kw">intersect</span>(Si.G3.40perc<span class="op">$</span>species, Si.G1.40perc<span class="op">$</span>species)
 
 <span class="co"># Add informations to the PCoA table need to performe Fig.2</span>
 pcoa1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">species =</span> <span class="kw">rownames</span>(pcoa0<span class="op">$</span>vectors), pcoa0<span class="op">$</span>vectors[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)])
@@ -794,31 +806,23 @@ pcoa1 &lt;-<span class="st"> </span>pcoa1 <span class="op">%&gt;%</span><span cl
         <span class="st">&quot;FG7&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">6</span>]), <span class="st">&quot;FG10&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
 <span class="st">            </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">7</span>]), <span class="st">&quot;FG8&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span>
 <span class="st">            </span><span class="dv">8</span>]), <span class="st">&quot;FG3&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">9</span>]), <span class="st">&quot;FG2&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">            </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">10</span>]), <span class="st">&quot;FG1&quot;</span>, <span class="ot">NA</span>))))))))))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">occurrence =</span> <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_G1, <span class="st">&quot;UnCont1&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa_G3, <span class="st">&quot;Cont&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_common, <span class="st">&quot;Common&quot;</span>, <span class="st">&quot;Common&quot;</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">occurrence.color =</span> <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_G1, <span class="st">&quot;#6699FF&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa_G3, <span class="st">&quot;#FF6666&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_common, <span class="st">&quot;#404040&quot;</span>, <span class="st">&quot;#404040&quot;</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">id =</span> <span class="st">&quot;cluster&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Si.75perc.color =</span> <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa.Si.G1, <span class="st">&quot;#6699FF&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa.Si.G3, <span class="st">&quot;#FF6666&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa.Si.common, <span class="st">&quot;#404040&quot;</span>, <span class="st">&quot;#CCCCCC&quot;</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Si.75perc.pch =</span> <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa.Si.G1, <span class="dv">17</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa.Si.G3, <span class="dv">17</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa.Si.common, <span class="dv">17</span>, <span class="dv">19</span>))))
-pcoa1 &lt;-<span class="st"> </span>pcoa1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Si.75perc.occurrence =</span> <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>Si.75perc.color <span class="op">==</span><span class="st"> </span>
-<span class="st">    &quot;#6699FF&quot;</span>, <span class="st">&quot;UnCont1&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>Si.75perc.color <span class="op">==</span><span class="st"> &quot;#FF6666&quot;</span>, <span class="st">&quot;Cont&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>Si.75perc.color <span class="op">==</span><span class="st"> </span>
-<span class="st">    &quot;#404040&quot;</span>, <span class="st">&quot;Common&quot;</span>, <span class="st">&quot;Rare&quot;</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(species, clust, clust.color, occurrence, 
-    occurrence.color, Si.75perc.color, Si.75perc.pch, Si.75perc.occurrence, id, Axis.<span class="dv">1</span>, 
-    Axis.<span class="dv">2</span>)
+<span class="st">            </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">10</span>]), <span class="st">&quot;FG1&quot;</span>, <span class="ot">NA</span>))))))))))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">id =</span> <span class="st">&quot;cluster&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">Si.40perc.color =</span> <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa.Si.G1, <span class="st">&quot;#6699FF&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
+<span class="st">        </span>taxa.Si.G3, <span class="st">&quot;#FF6666&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa.Si.common, <span class="st">&quot;#404040&quot;</span>, 
+        <span class="st">&quot;#CCCCCC&quot;</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Si.40perc.pch =</span> <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa.Si.G1, 
+    <span class="dv">17</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa.Si.G3, <span class="dv">17</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa.Si.common, 
+        <span class="dv">17</span>, <span class="dv">19</span>))))
+pcoa1 &lt;-<span class="st"> </span>pcoa1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Si.40perc.occurrence =</span> <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>Si.40perc.color <span class="op">==</span><span class="st"> </span>
+<span class="st">    &quot;#6699FF&quot;</span>, <span class="st">&quot;UnCont1&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>Si.40perc.color <span class="op">==</span><span class="st"> &quot;#FF6666&quot;</span>, <span class="st">&quot;Cont&quot;</span>, <span class="kw">ifelse</span>(pcoa1<span class="op">$</span>Si.40perc.color <span class="op">==</span><span class="st"> </span>
+<span class="st">    &quot;#404040&quot;</span>, <span class="st">&quot;Common&quot;</span>, <span class="st">&quot;Rare&quot;</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(species, clust, clust.color, Si.40perc.color, 
+    Si.40perc.pch, Si.40perc.occurrence, id, Axis.<span class="dv">1</span>, Axis.<span class="dv">2</span>)
 pcoa1<span class="op">$</span>clust &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa1<span class="op">$</span>clust, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;FG1&quot;</span>, <span class="st">&quot;FG2&quot;</span>, <span class="st">&quot;FG3&quot;</span>, <span class="st">&quot;FG4&quot;</span>, <span class="st">&quot;FG5&quot;</span>, 
     <span class="st">&quot;FG6&quot;</span>, <span class="st">&quot;FG7&quot;</span>, <span class="st">&quot;FG8&quot;</span>, <span class="st">&quot;FG9&quot;</span>, <span class="st">&quot;FG10&quot;</span>))
 pcoa1<span class="op">$</span>clust.color &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa1<span class="op">$</span>clust.color, <span class="dt">levels =</span> <span class="kw">unique</span>(pcoa1<span class="op">$</span>clust.color)[<span class="kw">c</span>(<span class="dv">10</span>, 
     <span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">2</span>)])
-pcoa1<span class="op">$</span>occurrence &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa1<span class="op">$</span>occurrence, <span class="dt">levels =</span> <span class="kw">unique</span>(pcoa1<span class="op">$</span>occurrence)[<span class="kw">c</span>(<span class="dv">2</span>, 
-    <span class="dv">1</span>, <span class="dv">3</span>)])
-pcoa1<span class="op">$</span>occurrence.color &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa1<span class="op">$</span>occurrence.color, <span class="dt">levels =</span> <span class="kw">unique</span>(pcoa1<span class="op">$</span>occurrence.color)[<span class="kw">c</span>(<span class="dv">2</span>, 
-    <span class="dv">1</span>, <span class="dv">3</span>)])
-pcoa1<span class="op">$</span>Si.75perc.color &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa1<span class="op">$</span>Si.75perc.color, <span class="dt">levels =</span> <span class="kw">unique</span>(pcoa1<span class="op">$</span>Si.75perc.color)[<span class="kw">c</span>(<span class="dv">2</span>, 
+pcoa1<span class="op">$</span>Si.40perc.color &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa1<span class="op">$</span>Si.40perc.color, <span class="dt">levels =</span> <span class="kw">unique</span>(pcoa1<span class="op">$</span>Si.40perc.color)[<span class="kw">c</span>(<span class="dv">2</span>, 
     <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>)])
-pcoa1<span class="op">$</span>Si.75perc.occurrence &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa1<span class="op">$</span>Si.75perc.occurrence, <span class="dt">levels =</span> <span class="kw">unique</span>(pcoa1<span class="op">$</span>Si.75perc.occurrence)[<span class="kw">c</span>(<span class="dv">2</span>, 
+pcoa1<span class="op">$</span>Si.40perc.occurrence &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa1<span class="op">$</span>Si.40perc.occurrence, <span class="dt">levels =</span> <span class="kw">unique</span>(pcoa1<span class="op">$</span>Si.40perc.occurrence)[<span class="kw">c</span>(<span class="dv">2</span>, 
     <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>)])
 
 <span class="co"># Estimation of the convex hull for each functional group according to the first</span>
@@ -827,10 +831,10 @@ hull_hc &lt;-<span class="st"> </span>pcoa1 <span class="op">%&gt;%</span><span 
 
 <span class="co"># Plot of the PCoA with convex hulles</span>
 gplot.pcoa &lt;-<span class="st"> </span><span class="kw">ggplot</span>(pcoa1, <span class="kw">aes</span>(<span class="dt">x =</span> Axis.<span class="dv">1</span>, <span class="dt">y =</span> Axis.<span class="dv">2</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">19</span>, 
-    <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">col =</span> pcoa1<span class="op">$</span>Si.75perc.color)
+    <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">col =</span> pcoa1<span class="op">$</span>Si.40perc.color)
 gplot.pcoa &lt;-<span class="st"> </span>gplot.pcoa <span class="op">+</span><span class="st"> </span><span class="kw">aes</span>(<span class="dt">fill =</span> <span class="kw">factor</span>(clust)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_polygon</span>(<span class="dt">data =</span> hull_hc, 
     <span class="dt">alpha =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> <span class="kw">as.character</span>(<span class="kw">unique</span>(pcoa1<span class="op">$</span>clust.color)[<span class="kw">c</span>(<span class="dv">10</span>, 
-    <span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">2</span>)])) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">19</span>, <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">col =</span> pcoa1<span class="op">$</span>Si.75perc.color) <span class="op">+</span><span class="st"> </span>
+    <span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">2</span>)])) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">19</span>, <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">col =</span> pcoa1<span class="op">$</span>Si.40perc.color) <span class="op">+</span><span class="st"> </span>
 <span class="st">    </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(), <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>, 
     <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>), <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>), 
     <span class="dt">axis.title.x =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>), <span class="dt">axis.title.y =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>)) <span class="op">+</span><span class="st"> </span>
@@ -839,8 +843,8 @@ gplot.pcoa &lt;-<span class="st"> </span>gplot.pcoa <span class="op">+</span><sp
     <span class="dt">yend =</span> <span class="op">-</span><span class="fl">4.8</span>), <span class="dt">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">linetype =</span> <span class="st">&quot;solid&quot;</span>)
 
 <span class="co"># Legend of the UnCont1, Cont, Common, and Rare species</span>
-legend_occurrence_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(pcoa1, <span class="kw">aes</span>(<span class="dt">x =</span> Axis.<span class="dv">1</span>, <span class="dt">y =</span> Axis.<span class="dv">2</span>, <span class="dt">color =</span> Si.75perc.occurrence)) <span class="op">+</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">levels</span>(pcoa1<span class="op">$</span>Si.75perc.color)) <span class="op">+</span><span class="st"> </span>
+legend_occurrence_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(pcoa1, <span class="kw">aes</span>(<span class="dt">x =</span> Axis.<span class="dv">1</span>, <span class="dt">y =</span> Axis.<span class="dv">2</span>, <span class="dt">color =</span> Si.40perc.occurrence)) <span class="op">+</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">levels</span>(pcoa1<span class="op">$</span>Si.40perc.color)) <span class="op">+</span><span class="st"> </span>
 <span class="st">    </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_void</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(), <span class="dt">legend.title =</span> <span class="kw">element_blank</span>(), 
     <span class="dt">legend.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>))
 legendoccurrence &lt;-<span class="st"> </span><span class="kw">plot_grid</span>(<span class="kw">get_legend</span>(legend_occurrence_plot <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;left&quot;</span>)))
@@ -919,13 +923,10 @@ pcoa2.G1G2G3 &lt;-<span class="st"> </span>pcoa2.G1G2G3 <span class="op">%&gt;%<
 <span class="st">    </span><span class="dv">5</span>]), <span class="st">&quot;FG5&quot;</span>, <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">6</span>]), <span class="st">&quot;FG6&quot;</span>, <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
 <span class="st">    </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">7</span>]), <span class="st">&quot;FG7&quot;</span>, <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span>
 <span class="st">    </span><span class="dv">8</span>]), <span class="st">&quot;FG8&quot;</span>, <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">9</span>]), <span class="st">&quot;FG9&quot;</span>, <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">10</span>]), <span class="st">&quot;FG10&quot;</span>, <span class="ot">NA</span>))))))))))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">occurrence =</span> <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_G1, <span class="st">&quot;#6699FF&quot;</span>, <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>taxa_G3, <span class="st">&quot;#FF6666&quot;</span>, <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>species <span class="op">%in%</span><span class="st"> </span>
-<span class="st">    </span>taxa_common, <span class="st">&quot;#404040&quot;</span>, <span class="ot">NA</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">group.color =</span> <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>group.site <span class="op">==</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">names</span>(fac[fac <span class="op">==</span><span class="st"> </span><span class="dv">10</span>]), <span class="st">&quot;FG10&quot;</span>, <span class="ot">NA</span>))))))))))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">group.color =</span> <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>group.site <span class="op">==</span><span class="st"> </span>
 <span class="st">    &quot;UnCont1&quot;</span>, <span class="st">&quot;#6699FF&quot;</span>, <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>group.site <span class="op">==</span><span class="st"> &quot;UnCont2&quot;</span>, <span class="st">&quot;#00BA42&quot;</span>, 
     <span class="kw">ifelse</span>(pcoa2.G1G2G3<span class="op">$</span>group.site <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>, <span class="st">&quot;#FF6666&quot;</span>, <span class="ot">NA</span>)))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">id =</span> <span class="st">&quot;cluster&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">select</span>(species, group.site, group.color, clust.color, clust, occurrence, id, 
-        Axis.<span class="dv">1</span>, Axis.<span class="dv">2</span>)
+<span class="st">    </span><span class="kw">select</span>(species, group.site, group.color, clust.color, clust, id, Axis.<span class="dv">1</span>, Axis.<span class="dv">2</span>)
 pcoa2.G1G2G3<span class="op">$</span>clust &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa2.G1G2G3<span class="op">$</span>clust, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;FG1&quot;</span>, <span class="st">&quot;FG2&quot;</span>, <span class="st">&quot;FG3&quot;</span>, 
     <span class="st">&quot;FG4&quot;</span>, <span class="st">&quot;FG5&quot;</span>, <span class="st">&quot;FG6&quot;</span>, <span class="st">&quot;FG7&quot;</span>, <span class="st">&quot;FG8&quot;</span>, <span class="st">&quot;FG9&quot;</span>, <span class="st">&quot;FG10&quot;</span>))
 pcoa2.G1G2G3<span class="op">$</span>group.site &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa2.G1G2G3<span class="op">$</span>group.site, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;UnCont1&quot;</span>, 
@@ -1047,9 +1048,9 @@ Si.G3<span class="op">$</span>new.names.species &lt;-<span class="st"> </span><s
 
 Si.G1<span class="op">$</span>Si.G3 &lt;-<span class="st"> </span><span class="op">-</span><span class="fl">0.1</span>
 <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Si.G1)) {
-  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Si.G3.75perc)) {
-    <span class="cf">if</span>(Si.G1<span class="op">$</span>species[i] <span class="op">%in%</span><span class="st"> </span>Si.G3.75perc<span class="op">$</span>species[j]) {
-      Si.G1<span class="op">$</span>Si.G3[i] &lt;-<span class="st"> </span>Si.G3.75perc<span class="op">$</span>Si[j]
+  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Si.G3.40perc)) {
+    <span class="cf">if</span>(Si.G1<span class="op">$</span>species[i] <span class="op">%in%</span><span class="st"> </span>Si.G3.40perc<span class="op">$</span>species[j]) {
+      Si.G1<span class="op">$</span>Si.G3[i] &lt;-<span class="st"> </span>Si.G3.40perc<span class="op">$</span>Si[j]
     }
   }
 }
@@ -1495,8 +1496,7 @@ locale:
 [5] LC_TIME=French_France.1252    
 
 attached base packages:
-[1] grid      stats     graphics  grDevices utils     datasets  methods  
-[8] base     
+[1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
  [1] adiv_2.0.1         BAT_2.5.0          cowplot_1.0.0      dendextend_1.13.4 
@@ -1511,31 +1511,31 @@ other attached packages:
 
 loaded via a namespace (and not attached):
  [1] utf8_1.1.4              ks_1.11.7               tidyselect_1.1.0       
- [4] htmlwidgets_1.5.1       FactoMineR_2.3          combinat_0.0-8         
- [7] RNeXML_2.4.3            munsell_0.5.0           codetools_0.2-16       
-[10] units_0.6-5             miniUI_0.1.1.1          withr_2.2.0            
-[13] colorspace_1.4-1        knitr_1.28              uuid_0.1-4             
-[16] rstudioapi_0.11         leaps_3.1               nls2_0.2               
-[19] mnormt_2.0.2            polyclip_1.10-0         farver_2.0.3           
-[22] coda_0.19-3             LearnBayes_2.15.1       vctrs_0.3.7            
-[25] generics_0.1.0          clusterGeneration_1.3.5 xfun_0.22              
-[28] adegenet_2.1.2          fastcluster_1.1.25      adephylo_1.1-11        
-[31] R6_2.4.1                pdist_1.2               rmdformats_1.0.2       
-[34] manipulateWidget_0.10.1 assertthat_0.2.1        promises_1.1.0         
-[37] scales_1.1.0            gtable_0.3.0            phylobase_0.8.10       
-[40] phangorn_2.5.5          rlang_0.4.10            MatrixModels_0.4-1     
-[43] scatterplot3d_0.3-41    splines_3.6.3           lazyeval_0.2.2         
-[46] broom_0.7.6             rgl_0.100.54            yaml_2.2.1             
-[49] reshape2_1.4.3          abind_1.4-5             modelr_0.1.8           
-[52] crosstalk_1.1.0.1       backports_1.1.6         httpuv_1.5.2           
-[55] tools_3.6.3             bookdown_0.22           spData_0.3.3           
-[58] ellipsis_0.3.1          raster_3.1-5            Rcpp_1.0.4.6           
-[61] plyr_1.8.6              progress_1.2.2          classInt_0.4-3         
-[64] prettyunits_1.1.1       deldir_0.1-25           viridis_0.5.1          
-[67] haven_2.2.0             ggrepel_0.8.2           cluster_2.1.0          
-[70] fs_1.4.1                magrittr_1.5            data.table_1.12.8      
-[73] gmodels_2.18.1          reprex_0.3.0            tmvnsim_1.0-2          
- [ reached getOption(&quot;max.print&quot;) -- omitted 66 entries ]</code></pre>
+ [4] htmlwidgets_1.5.1       FactoMineR_2.3          grid_3.6.3             
+ [7] combinat_0.0-8          RNeXML_2.4.3            munsell_0.5.0          
+[10] codetools_0.2-16        units_0.6-5             miniUI_0.1.1.1         
+[13] withr_2.2.0             colorspace_1.4-1        knitr_1.28             
+[16] uuid_0.1-4              rstudioapi_0.11         leaps_3.1              
+[19] nls2_0.2                mnormt_2.0.2            polyclip_1.10-0        
+[22] farver_2.0.3            coda_0.19-3             LearnBayes_2.15.1      
+[25] vctrs_0.3.7             generics_0.1.0          clusterGeneration_1.3.5
+[28] xfun_0.22               adegenet_2.1.2          fastcluster_1.1.25     
+[31] adephylo_1.1-11         R6_2.4.1                pdist_1.2              
+[34] rmdformats_1.0.2        manipulateWidget_0.10.1 assertthat_0.2.1       
+[37] promises_1.1.0          scales_1.1.0            gtable_0.3.0           
+[40] phylobase_0.8.10        phangorn_2.5.5          rlang_0.4.10           
+[43] MatrixModels_0.4-1      scatterplot3d_0.3-41    splines_3.6.3          
+[46] lazyeval_0.2.2          broom_0.7.6             rgl_0.100.54           
+[49] yaml_2.2.1              reshape2_1.4.3          abind_1.4-5            
+[52] modelr_0.1.8            crosstalk_1.1.0.1       backports_1.1.6        
+[55] httpuv_1.5.2            tools_3.6.3             bookdown_0.22          
+[58] spData_0.3.3            ellipsis_0.3.1          raster_3.1-5           
+[61] Rcpp_1.0.4.6            plyr_1.8.6              progress_1.2.2         
+[64] classInt_0.4-3          prettyunits_1.1.1       deldir_0.1-25          
+[67] viridis_0.5.1           haven_2.2.0             ggrepel_0.8.2          
+[70] cluster_2.1.0           fs_1.4.1                magrittr_1.5           
+[73] data.table_1.12.8       gmodels_2.18.1          reprex_0.3.0           
+ [ reached getOption(&quot;max.print&quot;) -- omitted 67 entries ]</code></pre>
 </div>
 </div>
 
