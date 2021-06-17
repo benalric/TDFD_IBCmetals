@@ -169,13 +169,6 @@ Si.tidy <- scarcity_stack(com_df = abun_subg_tidy,
                           sp_col = "species",
                           com = "site",
                           abund = "value")
-Si.tidy <- Si.tidy %>%
-  mutate(cd_site = gsub("\\_.*", "", Si.tidy$site)) %>%
-  mutate(group = gsub(".*\\_", "", Si.tidy$site)) %>%
-  select(-c(site)) %>%
-  dplyr::rename(abundance = value) %>%
-  dplyr::rename(site = cd_site) %>%
-  relocate(site, species, group, abundance, Si)
 ```
 
 # Computation of functional contribution and originality of each species to the total volume of the trait space 
