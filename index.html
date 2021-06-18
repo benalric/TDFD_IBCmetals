@@ -7,7 +7,7 @@
 
         <meta name="author" content="Benjamin Alric" />
     
-        <meta name="date" content="2021-06-17" />
+        <meta name="date" content="2021-06-18" />
     
     <title>Tutorial for analysis of taxonomic and functional diversdity in relation to metal contamination</title>
 
@@ -195,7 +195,7 @@
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Benjamin Alric</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-06-17</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-06-18</p>
           </div>
    </div>
    
@@ -441,10 +441,10 @@ blo_eltonian &lt;-<span class="st"> </span><span class="kw">c</span>(<span class
     <span class="st">&quot;Locomotion type&quot;</span>, <span class="st">&quot;Food&quot;</span>, <span class="st">&quot;Feeding type&quot;</span>)
 trait_eltonian_Eq &lt;-<span class="st"> </span><span class="kw">prep.fuzzy.var</span>(trait_eltonian_Eq, <span class="dt">col.blocks =</span> blo_eltonian)
 
-z.trait_UnCont1_contrib &lt;-<span class="st"> </span><span class="kw">scale</span>(trait_eltonian, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)
-z.trait_Cont_contrib &lt;-<span class="st"> </span><span class="kw">scale</span>(trait_eltonian, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)
-z.trait_UnCont1_Eq &lt;-<span class="st"> </span><span class="kw">scale</span>(trait_eltonian, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)
-z.trait_Cont_Eq &lt;-<span class="st"> </span><span class="kw">scale</span>(trait_eltonian, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)</code></pre></div>
+z.trait_UnCont1_contrib &lt;-<span class="st"> </span><span class="kw">scale</span>(trait_eltonian_Eq, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)
+z.trait_Cont_contrib &lt;-<span class="st"> </span><span class="kw">scale</span>(trait_eltonian_Eq, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)
+z.trait_UnCont1_Eq &lt;-<span class="st"> </span><span class="kw">scale</span>(trait_eltonian_Eq, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)
+z.trait_Cont_Eq &lt;-<span class="st"> </span><span class="kw">scale</span>(trait_eltonian_Eq, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)</code></pre></div>
 </div>
 <div id="decomposition-of-functional-beta-diversity" class="section level2">
 <h2><span class="header-section-number">11.2</span> Decomposition of functional beta diversity</h2>
@@ -692,11 +692,10 @@ table_FD &lt;-<span class="st"> </span>TDFD_IBC_res<span class="op">$</span>TDFD
 table_FD<span class="op">$</span>group &lt;-<span class="st"> </span><span class="kw">as.factor</span>(table_FD<span class="op">$</span>group)
 table_FD<span class="op">$</span>group &lt;-<span class="st"> </span><span class="kw">factor</span>(table_FD<span class="op">$</span>group, <span class="kw">levels</span>(table_FD<span class="op">$</span>group)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>)])
 
-<span class="co"># Test homoscedaticity of variances (levene test) if p.value &gt; 0.05 we have</span>
-<span class="co"># homoscedasticity and we can make classical anova [aov()] if p.value &lt; 0.05 we</span>
+<span class="co"># Test homoscedaticity of variances (levene test) # if p.value &gt; 0.05 we have</span>
+<span class="co"># homoscedasticity and we can make classical anova [aov()] # if p.value &lt; 0.05 we</span>
 <span class="co"># have heteroscedasticity and we can make modified anova, i.e. Welch-anova</span>
 <span class="co"># [userfriendlyscience::oneway()]</span>
-leven.shan &lt;-<span class="st"> </span>car<span class="op">::</span><span class="kw">leveneTest</span>(N1b2 <span class="op">~</span><span class="st"> </span><span class="kw">as.factor</span>(group), <span class="dt">data =</span> table_FD)  <span class="co"># p.value = 0.3595, thus we can made classical anova</span>
 leven.Rao.CH.scale &lt;-<span class="st"> </span>car<span class="op">::</span><span class="kw">leveneTest</span>(RaoQ.CH.scale <span class="op">~</span><span class="st"> </span><span class="kw">as.factor</span>(group), <span class="dt">data =</span> table_FD)  <span class="co"># p.value = 0.2634, thus we can made classical anova</span>
 
 <span class="co"># Test the group effect on Rao's index</span>
@@ -929,10 +928,10 @@ pcoa2.G1G2G3<span class="op">$</span>clust &lt;-<span class="st"> </span><span c
 pcoa2.G1G2G3<span class="op">$</span>group.site &lt;-<span class="st"> </span><span class="kw">factor</span>(pcoa2.G1G2G3<span class="op">$</span>group.site, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;UnCont1&quot;</span>, 
     <span class="st">&quot;UnCont2&quot;</span>, <span class="st">&quot;Cont&quot;</span>))
 
-<span class="co"># Plot of PCoA with four panels Panel A: PCoA of UnCont1 Panel B: PCoA of UnCont2</span>
-<span class="co"># Panel C: PCoA of Cont Panel D: PCoA of UnCont1, UnCont2, Cont Estimation of the</span>
-<span class="co"># convex hull for each functional group for group of sites (i.e., UnCont1,</span>
-<span class="co"># UntCont2, Cont)</span>
+<span class="co"># Plot of PCoA with four panels # Panel A: PCoA of UnCont1 # Panel B: PCoA of</span>
+<span class="co"># UnCont2 # Panel C: PCoA of Cont # Panel D: PCoA of UnCont1, UnCont2, Cont #</span>
+<span class="co"># Estimation of the convex hull for each functional group for group of sites</span>
+<span class="co"># (i.e., UnCont1, UntCont2, Cont)</span>
 hull_group &lt;-<span class="st"> </span>pcoa2.G1G2G3 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(group.site) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">slice</span>(<span class="kw">chull</span>(Axis.<span class="dv">1</span>, Axis.<span class="dv">2</span>))
 
 <span class="co"># Plot for UnCont1</span>
@@ -1401,11 +1400,13 @@ pathFig &lt;-<span class="st"> &quot;C:/Users/benjamin/Documents/TDFD_IBCmetals/
 <div id="figure-s8" class="section level2">
 <h2><span class="header-section-number">13.10</span> Figure S8</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Test the relationship betwwen Rao's index and metal gradient</span>
-table_FD &lt;-<span class="st"> </span>FD.FRar<span class="op">$</span>FD.metrics[<span class="op">!</span>(FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Intermed&quot;</span>), ]
+table_FD &lt;-<span class="st"> </span>TDFD_IBC_res<span class="op">$</span>TDFD_metrics[<span class="op">!</span>(TDFD_IBC_res<span class="op">$</span>TDFD_metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Intermed&quot;</span>), 
+    ]
+table_FD<span class="op">$</span>group &lt;-<span class="st"> </span><span class="kw">as.factor</span>(table_FD<span class="op">$</span>group)
 table_FD<span class="op">$</span>group &lt;-<span class="st"> </span><span class="kw">factor</span>(table_FD<span class="op">$</span>group, <span class="kw">levels</span>(table_FD<span class="op">$</span>group)[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>)])
 
-<span class="co"># Test homoscedaticity of variances (levene test) if p.value &gt; 0.05 we have</span>
-<span class="co"># homoscedasticity and we can make classical anova [aov()] if p.value &lt; 0.05 we</span>
+<span class="co"># Test homoscedaticity of variances (levene test) # if p.value &gt; 0.05 we have</span>
+<span class="co"># homoscedasticity and we can make classical anova [aov()] # if p.value &lt; 0.05 we</span>
 <span class="co"># have heteroscedasticity and we can make modified anova, i.e. Welch-anova</span>
 <span class="co"># [userfriendlyscience::oneway()]</span>
 leven.FD.FDis &lt;-<span class="st"> </span>car<span class="op">::</span><span class="kw">leveneTest</span>(FD.FDis <span class="op">~</span><span class="st"> </span><span class="kw">as.factor</span>(group), <span class="dt">data =</span> table_FD)  <span class="co"># p.value = 0.2643, thus we can made classical anova</span>
@@ -1421,23 +1422,20 @@ pathFig &lt;-<span class="st"> &quot;C:/Users/benjamin/Documents/TDFD_IBCmetals&
 <span class="kw">tiff</span>(<span class="kw">paste0</span>(pathFig, <span class="st">&quot;/Rplot_trait_x_IBC_FigS8.tiff&quot;</span>), <span class="dt">units =</span> <span class="st">&quot;in&quot;</span>, <span class="dt">width =</span> <span class="dv">10</span>, 
     <span class="dt">height =</span> <span class="dv">8</span>, <span class="dt">res =</span> <span class="dv">300</span>)
 <span class="kw">par</span>(<span class="dt">mar =</span> <span class="kw">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">5</span>))
-<span class="kw">plot</span>(<span class="dv">1</span>, <span class="kw">mean</span>(FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>]), 
-    <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">3.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, (<span class="kw">max</span>(FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis) <span class="op">+</span><span class="st"> </span><span class="dv">2</span>)), <span class="dt">las =</span> <span class="dv">1</span>, 
-    <span class="dt">xaxt =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">ann =</span> <span class="ot">FALSE</span>, <span class="dt">pch =</span> <span class="dv">17</span>, <span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="dt">cex =</span> <span class="dv">2</span>)
-<span class="kw">axis</span>(<span class="dv">1</span>, <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">1</span>), <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;UnCont1&quot;</span>, <span class="st">&quot;UnCont2&quot;</span>, <span class="st">&quot;Cont&quot;</span>, <span class="st">&quot;&quot;</span>))
-<span class="kw">points</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>])), 
-    FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>], <span class="dt">cex =</span> <span class="dv">1</span>, <span class="dt">pch =</span> <span class="dv">19</span>, 
-    <span class="dt">col =</span> <span class="st">&quot;#0066CC&quot;</span>)
-<span class="kw">points</span>(<span class="dv">2</span>, <span class="kw">mean</span>(FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont2&quot;</span>]), 
-    <span class="dt">pch =</span> <span class="dv">17</span>, <span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="dt">cex =</span> <span class="dv">2</span>)
-<span class="kw">points</span>(<span class="kw">rep</span>(<span class="dv">2</span>, <span class="kw">length</span>(FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont2&quot;</span>])), 
-    FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont2&quot;</span>], <span class="dt">cex =</span> <span class="dv">1</span>, <span class="dt">pch =</span> <span class="dv">19</span>, 
-    <span class="dt">col =</span> <span class="st">&quot;#00CC00&quot;</span>)
-<span class="kw">points</span>(<span class="dv">3</span>, <span class="kw">mean</span>(FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>]), <span class="dt">pch =</span> <span class="dv">17</span>, 
+<span class="kw">plot</span>(<span class="dv">1</span>, <span class="kw">mean</span>(table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>]), <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">3.5</span>), 
+    <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, (<span class="kw">max</span>(table_FD<span class="op">$</span>FD.FDis) <span class="op">+</span><span class="st"> </span><span class="dv">2</span>)), <span class="dt">las =</span> <span class="dv">1</span>, <span class="dt">xaxt =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">ann =</span> <span class="ot">FALSE</span>, <span class="dt">pch =</span> <span class="dv">17</span>, 
     <span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="dt">cex =</span> <span class="dv">2</span>)
-<span class="kw">points</span>(<span class="kw">rep</span>(<span class="dv">3</span>, <span class="kw">length</span>(FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>])), 
-    FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>FD.FDis[FD.FRar<span class="op">$</span>FD.metrics<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>], <span class="dt">cex =</span> <span class="dv">1</span>, <span class="dt">pch =</span> <span class="dv">19</span>, 
-    <span class="dt">col =</span> <span class="st">&quot;#FF0000&quot;</span>)
+<span class="kw">axis</span>(<span class="dv">1</span>, <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">1</span>), <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;UnCont1&quot;</span>, <span class="st">&quot;UnCont2&quot;</span>, <span class="st">&quot;Cont&quot;</span>, <span class="st">&quot;&quot;</span>))
+<span class="kw">points</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont1&quot;</span>])), table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> </span>
+<span class="st">    &quot;UnCont1&quot;</span>], <span class="dt">cex =</span> <span class="dv">1</span>, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="st">&quot;#0066CC&quot;</span>)
+<span class="kw">points</span>(<span class="dv">2</span>, <span class="kw">mean</span>(table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont2&quot;</span>]), <span class="dt">pch =</span> <span class="dv">17</span>, <span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, 
+    <span class="dt">cex =</span> <span class="dv">2</span>)
+<span class="kw">points</span>(<span class="kw">rep</span>(<span class="dv">2</span>, <span class="kw">length</span>(table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;UnCont2&quot;</span>])), table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> </span>
+<span class="st">    &quot;UnCont2&quot;</span>], <span class="dt">cex =</span> <span class="dv">1</span>, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="st">&quot;#00CC00&quot;</span>)
+<span class="kw">points</span>(<span class="dv">3</span>, <span class="kw">mean</span>(table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>]), <span class="dt">pch =</span> <span class="dv">17</span>, <span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, 
+    <span class="dt">cex =</span> <span class="dv">2</span>)
+<span class="kw">points</span>(<span class="kw">rep</span>(<span class="dv">3</span>, <span class="kw">length</span>(table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;Cont&quot;</span>])), table_FD<span class="op">$</span>FD.FDis[table_FD<span class="op">$</span>group <span class="op">==</span><span class="st"> </span>
+<span class="st">    &quot;Cont&quot;</span>], <span class="dt">cex =</span> <span class="dv">1</span>, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="st">&quot;#FF0000&quot;</span>)
 <span class="kw">mtext</span>(<span class="dt">text =</span> <span class="kw">expression</span>(<span class="st">&quot;FDis&quot;</span>), <span class="dt">side =</span> <span class="dv">2</span>, <span class="dt">line =</span> <span class="dv">3</span>, <span class="dt">cex =</span> <span class="dv">1</span>)
 <span class="kw">text</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>(<span class="kw">nlevels</span>(table_FD<span class="op">$</span>group))), <span class="kw">c</span>(<span class="fl">9.5</span>, <span class="fl">9.5</span>, <span class="fl">9.5</span>), <span class="kw">c</span>(<span class="kw">unique</span>(table_FD<span class="op">$</span>posthoc.FDis)), 
     <span class="dt">cex =</span> <span class="fl">1.5</span>)
