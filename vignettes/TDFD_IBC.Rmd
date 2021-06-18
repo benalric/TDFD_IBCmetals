@@ -248,10 +248,10 @@ names(blo_eltonian) <- c("Maximal potential size",
                          "Feeding type")
 trait_eltonian_Eq <- prep.fuzzy.var(trait_eltonian_Eq, col.blocks = blo_eltonian)
 
-z.trait_UnCont1_contrib <- scale(trait_eltonian, center = TRUE, scale = TRUE)
-z.trait_Cont_contrib <- scale(trait_eltonian, center = TRUE, scale = TRUE)
-z.trait_UnCont1_Eq <- scale(trait_eltonian, center = TRUE, scale = TRUE)
-z.trait_Cont_Eq <- scale(trait_eltonian, center = TRUE, scale = TRUE)
+z.trait_UnCont1_contrib <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
+z.trait_Cont_contrib <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
+z.trait_UnCont1_Eq <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
+z.trait_Cont_Eq <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
 ````
 
 ## Decomposition of functional beta diversity
@@ -486,10 +486,9 @@ table_FD <- TDFD_IBC_res$TDFD_metrics[!(TDFD_IBC_res$TDFD_metrics$group == "Inte
 table_FD$group <- as.factor(table_FD$group)
 table_FD$group <- factor(table_FD$group, levels(table_FD$group)[c(3, 4, 1)])
 
-# Test homoscedaticity of variances (levene test)
-# if p.value > 0.05 we have homoscedasticity and we can make classical anova [aov()]
+# Test homoscedaticity of variances (levene test) #
+# if p.value > 0.05 we have homoscedasticity and we can make classical anova [aov()] #
 # if p.value < 0.05 we have heteroscedasticity and we can make modified anova, i.e. Welch-anova [userfriendlyscience::oneway()]
-leven.shan <- car::leveneTest(N1b2 ~ as.factor(group), data = table_FD) # p.value = 0.3595, thus we can made classical anova
 leven.Rao.CH.scale <- car::leveneTest(RaoQ.CH.scale ~ as.factor(group), data = table_FD) # p.value = 0.2634, thus we can made classical anova
 
 # Test the group effect on Rao's index
@@ -755,11 +754,11 @@ select(species, group.site, group.color, clust.color, clust, id, Axis.1, Axis.2)
 pcoa2.G1G2G3$clust <- factor(pcoa2.G1G2G3$clust, levels = c("FG1", "FG2", "FG3", "FG4", "FG5", "FG6", "FG7", "FG8", "FG9", "FG10"))
 pcoa2.G1G2G3$group.site <- factor(pcoa2.G1G2G3$group.site, levels = c("UnCont1", "UnCont2", "Cont"))
 
-# Plot of PCoA with four panels
-# Panel A: PCoA of UnCont1
-# Panel B: PCoA of UnCont2
-# Panel C: PCoA of Cont
-# Panel D: PCoA of UnCont1, UnCont2, Cont
+# Plot of PCoA with four panels #
+# Panel A: PCoA of UnCont1 #
+# Panel B: PCoA of UnCont2 #
+# Panel C: PCoA of Cont #
+# Panel D: PCoA of UnCont1, UnCont2, Cont #
 # Estimation of the convex hull for each functional group for group of sites (i.e., UnCont1, UntCont2, Cont)
 hull_group <- pcoa2.G1G2G3 %>%
   group_by(group.site) %>%
@@ -1245,11 +1244,12 @@ dev.off()
 ## Figure S8
 ```{r, eval = FALSE}
 # Test the relationship betwwen Rao's index and metal gradient
-table_FD <- FD.FRar$FD.metrics[!(FD.FRar$FD.metrics$group == "Intermed"), ]
+table_FD <- TDFD_IBC_res$TDFD_metrics[!(TDFD_IBC_res$TDFD_metrics$group == "Intermed"), ]
+table_FD$group <- as.factor(table_FD$group)
 table_FD$group <- factor(table_FD$group, levels(table_FD$group)[c(3, 4, 1)])
 
-# Test homoscedaticity of variances (levene test)
-# if p.value > 0.05 we have homoscedasticity and we can make classical anova [aov()]
+# Test homoscedaticity of variances (levene test) #
+# if p.value > 0.05 we have homoscedasticity and we can make classical anova [aov()] #
 # if p.value < 0.05 we have heteroscedasticity and we can make modified anova, i.e. Welch-anova [userfriendlyscience::oneway()]
 leven.FD.FDis <- car::leveneTest(FD.FDis ~ as.factor(group), data = table_FD) # p.value = 0.2643, thus we can made classical anova
 
@@ -1264,22 +1264,22 @@ pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals" # CHANGE ME to where you
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS8.tiff"),
      units = "in", width = 10, height = 8, res = 300)
 par(mar = c(5, 5, 3, 5))
-plot(1, mean(FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "UnCont1"]),
-     xlim = c(0.5, 3.5), ylim = c(0, (max(FD.FRar$FD.metrics$FD.FDis) + 2)),
+plot(1, mean(table_FD$FD.FDis[table_FD$group == "UnCont1"]),
+     xlim = c(0.5, 3.5), ylim = c(0, (max(table_FD$FD.FDis) + 2)),
      las = 1, xaxt = "n", ann = FALSE, pch = 17, col = "#000000", cex = 2)
 axis(1, seq(0, 4, 1), labels = c("", "UnCont1", "UnCont2", "Cont", ""))
-points(rep(1, length(FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "UnCont1"])), 
-       FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "UnCont1"], 
+points(rep(1, length(table_FD$FD.FDis[table_FD$group == "UnCont1"])), 
+       table_FD$FD.FDis[table_FD$group == "UnCont1"], 
        cex = 1, pch = 19, col = "#0066CC")
-points(2, mean(FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "UnCont2"]),
+points(2, mean(table_FD$FD.FDis[table_FD$group == "UnCont2"]),
        pch = 17, col = "#000000", cex = 2)
-points(rep(2, length(FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "UnCont2"])), 
-       FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "UnCont2"],
+points(rep(2, length(table_FD$FD.FDis[table_FD$group == "UnCont2"])), 
+       table_FD$FD.FDis[table_FD$group == "UnCont2"],
        cex = 1, pch = 19, col = "#00CC00")
-points(3, mean(FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "Cont"]),
+points(3, mean(table_FD$FD.FDis[table_FD$group == "Cont"]),
        pch = 17, col = "#000000", cex = 2)
-points(rep(3, length(FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "Cont"])), 
-       FD.FRar$FD.metrics$FD.FDis[FD.FRar$FD.metrics$group == "Cont"],
+points(rep(3, length(table_FD$FD.FDis[table_FD$group == "Cont"])), 
+       table_FD$FD.FDis[table_FD$group == "Cont"],
        cex = 1, pch = 19, col = "#FF0000")
 mtext(text = expression("FDis"), side = 2, line = 3, cex = 1)
 text(c(1:(nlevels(table_FD$group))) , 
