@@ -12,7 +12,7 @@
 # ======================================== TABLE OF CONTENTS ======================================== #  
 #                                                                                                     #
 # 01. betadiv: Function to decompose taxonomic beta-diversity and test significance from null models  #
-# 02. Rao.CH: Function to calculate the FD from the Rao's quandratic entropy                          #
+# 02. Rao.CH: Function to calculate the FD from the Rao's quadratic entropy                           #
 #                                                                                                     #
 # =================================================================================================== #
 
@@ -22,15 +22,14 @@
 
 ##
 # The function 'betadiv' runs the analysis
-# It uses three elements:
-# - taxa: a community matrix (C x S) with C samples (or communities) as rows, and S species as columns
-# - site: a vector corresponding to the names of sites
-# - method: whether "BR" method is used, Bray Curtis dissimilarity index is computes from abundance data; and whether "SOR" is used, sorensen dissimilarity index is computes from incidence data
-# - nrepet: the number of repetition of the null model
+# It uses four elements:
+#' @param taxa. A community matrix (C x S) with C samples (or communities) as rows, and S species as columns
+#' @param site. A vector corresponding to the names of sites
+#' @param method. Whether "BR" method is used, Bray Curtis dissimilarity index is computes from abundance data; and whether "SOR" is used, sorensen dissimilarity index is computes from incidence data
+#' @param nrepet. The number of repetition of the null model
 #
-# Lets 'res.beta' be the ouput as a list of values:
-# - a data frame with in row the group site and in columns observed and expected (null model) value of the three component of beta diversity (i.e., total beta diversity, turnover, and nestedness)
-#
+# It return one element:
+#' @return res.beta. A data frame with in row the group site and in columns observed and expected (null model) value of the three component of beta diversity (i.e., total beta diversity, turnover, and nestedness)
 ##
 
 betadiv <- function(taxa, site, method = "BR", nrepet = 999) {
@@ -148,14 +147,14 @@ betadiv <- function(taxa, site, method = "BR", nrepet = 999) {
 ##
 # The function 'Rao.CH' runs the analysis
 # It uses three elements:
-# - taxa: a community matrix (C x S) with C samples (or communities) as rows, and S species as columns
-# - trait: a matrix or data frame (S x T) with S species as rows, and T traits as columns, must have species names as rownames
-# - method: whether "euclidean" method is used, dissimilarity matrix is computes from euclidean distance
+#' @param taxa. A community matrix (C x S) with C samples (or communities) as rows, and S species as columns
+#' @param trait. A matrix or data frame (S x T) with S species as rows, and T traits as columns, must have species names as rownames
+#' @param method. whether "euclidean" method is used, dissimilarity matrix is computes from euclidean distance
 #
-# Lets 'Rao.FD' be the output as a a data frame (C x 1) listing for each C sample the value of functional diversity
+# It return one element:
+#' @return Rao.FD. A data frame (C x 1) listing for each C sample the value of functional diversity
 # - low value of Rao.FD: species are functionally similar
 # - high value of Rao.FD: species are functionally distinct
-#
 ##
 
 Rao.CH <- function(taxa, trait, method = "euclidean", scale = TRUE) {
