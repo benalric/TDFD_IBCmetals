@@ -27,9 +27,10 @@ knitr::opts_knit$set(width=75)
 ```
 
 # Aims
-In this repository, you will find the tutotrial reporting the code to reproduce the analyses and figures carried out in Alric *et al.* (2021). The scope of this tutorial is to increase its reproducibility, clarity, transparency and dissemination. Data analysis was done using R version 3.6.3. This documatn was compiled with the *rmarkdown* package version 2.8. This tutorial is licensed under CC BY-NC-ND 4.0, which means you are free to share, copy and redistribute this tutorial in any medium or format under the terms of attribution of appropriate credit, non-commercial purposes and no derivatives. The citation is:
+In this repository, you will find the tutorial reporting the code to reproduce the analyses and figures carried out in Alric *et al.* (2022). The scope of this tutorial is to increase its reproducibility, clarity, transparency and dissemination. Data analysis was done using R version 3.6.3. This docume
+nt was compiled with the *rmarkdown* package version 2.8. This tutorial is licensed under CC BY-NC-ND 4.0, which means you are free to share, copy and redistribute this tutorial in any medium or format under the terms of attribution of appropriate credit, non-commercial purposes and no derivatives. The citation is:
 
-> Alric B., O. Geffard, A. Chaumot. Sepcies replacement associated with lower richness but unchanged functional diversity of invertebrate communities in metal-contaminated streams.
+> Alric B., O. Geffard, A. Chaumot. Metal bioavailable contamination engages richness decline, species turnover but unchanged functional diversity of stream macroinvertebrates at the scale of a French region.
 
 # Software preparation
 Install R (https://www.r-project.org) (R Core Team 2020) if you do not have it already.
@@ -93,7 +94,6 @@ trait_eltonian$fresh.water <- trait_eltonian$brackish.water <-
   trait_eltonian$xenosaprobic <- trait_eltonian$oligosaprobic <- trait_eltonian$b.mesosaprobic <- 
   trait_eltonian$a.mesosaprobic <- trait_eltonian$polysaprobic <- trait_eltonian$X..4 <- trait_eltonian$X..4.4.5 <- 
   trait_eltonian$X..4.5.5 <- trait_eltonian$X..5.5.5 <- trait_eltonian$X..5.5.6 <- trait_eltonian$X..6 <- NULL
-
 blo_eltonian <- c(7, 2, 3, 4, 7, 4, 5, 4, 8, 9, 7) # nombre de modalites par traits
 names(blo_eltonian) <- c("Maximal potential size",
                          "Life-cycle duration",
@@ -233,7 +233,6 @@ trait_eltonian_Eq$fresh.water <- trait_eltonian_Eq$brackish.water <-
   trait_eltonian_Eq$xenosaprobic <- trait_eltonian_Eq$oligosaprobic <- trait_eltonian_Eq$b.mesosaprobic <- 
   trait_eltonian_Eq$a.mesosaprobic <- trait_eltonian_Eq$polysaprobic <- trait_eltonian_Eq$X..4 <- trait_eltonian_Eq$X..4.4.5 <- 
   trait_eltonian_Eq$X..4.5.5 <- trait_eltonian_Eq$X..5.5.5 <- trait_eltonian_Eq$X..5.5.6 <- trait_eltonian_Eq$X..6 <- NULL
-
 blo_eltonian <- c(7, 2, 3, 4, 7, 4, 5, 4, 8, 9, 7) # number of modalities per traits
 names(blo_eltonian) <- c("Maximal potential size",
                          "Life-cycle duration",
@@ -248,6 +247,7 @@ names(blo_eltonian) <- c("Maximal potential size",
                          "Feeding type")
 trait_eltonian_Eq <- prep.fuzzy.var(trait_eltonian_Eq, col.blocks = blo_eltonian)
 
+## Scaling and centering fuzzy data
 z.trait_UnCont1_contrib <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
 z.trait_Cont_contrib <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
 z.trait_UnCont1_Eq <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
@@ -370,7 +370,7 @@ FD_contrib_orig$originality <- c(orig_mean_UnCont1_perct, orig_mean_Cont_perct)
 TDFD_res <- data.frame(TDFD_IBC_data$abundance[, c(1:8)], TR, Hb2, N1, N1b2, RaoQ.CH.scale, FD$FDis)
 TDFD_IBC_res <- list(TDFD_IBC_data$abundance, TDFD_IBC_data$trait, TDFD_IBC_data$info_species, TDFD_res, Si.tidy, EqRao_res, FD_contrib_orig, betaIBC.BR.FF, betaIBC.SOR.FF)
 names(TDFD_IBC_res) <- c("abundance", "trait", "info_species", "TDFD_metrics", "scarcity", "EqRao", "FD_contrib_orig", "betadiv_BR", "betadiv_SOR")
-save(TDFD_IBC_res, file = "C:/Users/benjamin/Documents/TDFD_IBCmetals/Data/TDFD_IBC_res.RData")
+save(TDFD_IBC_res, file = "C:/Users/benjamin/Documents/TDFD_IBCmetals/data/TDFD_IBC_res.RData")
 ```
 
 # Buiding all figures presented in the mansucript and in the supplementary
@@ -383,7 +383,7 @@ save(TDFD_IBC_res, file = "C:/Users/benjamin/Documents/TDFD_IBCmetals/Data/TDFD_
 ### Figure 1 - Panel A
 ```{r, eval = FALSE}
 # Set file paths where shape files will be load
-pathSHP <- "C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Used_data_AFB48/QGIS_shp_france"
+pathSHP <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/data/QGIS_shp_france"
 
 # Load shape files
 AG <- readOGR(dsn = paste0(pathSHP, "/contours_adoure_garonne"), layer = "contours_adoure_garonne")
@@ -445,9 +445,9 @@ pred_nlrq_shannon <- predict(fit_nlrq_shannon)
 AIC(fit_rq_shannon) # 122.5254
 AIC(fit_nlrq_shannon) # 122.6316
 predicted_rq_shannon <- data.frame(IBCmetals = TDFD_IBC_res$TDFD_metrics$IBCmetals, pred = pred_rq_shannon)
-pv_fit_rq <- summary(fit_rq_shannon, se = "boot")$coefficients["IBCmetals", "Pr(>|t|)"] # p.value = 0.0126
+pv_fit_rq <- summary(fit_rq_shannon, se = "boot")$coefficients["IBCmetals", "Pr(>|t|)"] # p.value = 0.0131
 
-# Plot of the Shannon index against metal contamionation gradient
+# Plot of the Shannon index against metal contamination gradient
 TDFD_IBC_res$TDFD_metrics$color[TDFD_IBC_res$TDFD_metrics$color == "#000000"] <- "#FFFFFF"
 par(mar = c(5, 0, 3, 5))
 Fig1B <- ggplot(TDFD_IBC_res$TDFD_metrics, aes(x = IBCmetals, y = N1b2)) +
@@ -473,7 +473,7 @@ Fig1B <- ggplot(TDFD_IBC_res$TDFD_metrics, aes(x = IBCmetals, y = N1b2)) +
   annotate("text", 
            x = 0.28, 
            y = 13.5, 
-           label = as.character(expression(paste(italic(p), "= 0.0126"))),
+           label = as.character(expression(paste(italic(p), "= 0.0131"))),
            parse = TRUE,
            size = 3, 
            hjust = 0)
@@ -535,8 +535,6 @@ design <- c(
   area(1, 2, 2, 2),
   area(3, 2, 4, 2)
 )
-plot(design)
-
 Fig1 <- plot_spacer() + Fig1A + plot_spacer() + Fig1B + Fig1C +
   plot_layout(design = design, widths = c(0.5, 0.5), heights = c(0.5, 0.5, 0.5))
 
@@ -551,310 +549,6 @@ dev.off()
 ![Figure 1](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_Fig1.png)
 
 ## Figure 2
-```{r, eval = FALSE}
-# PCoA on the distance matrix computes from trait table
-pcoa0 <- pcoa(e.dist, correction = "cailliez")
-hc.pcoa <- hclust(dist(pcoa0$vectors[, c(1, 2)]), method = "ward.D2")
-X11()
-plot(hc.pcoa, hang = -1)
-rect.hclust(hc.pcoa, k = 10)
-fac <- cutree(hc.pcoa, k = 10)
-
-# Transform abundance table in tidy format
-abun_ibc.tidy <- TDFD_IBC_data$abundance %>% gather(key = "taxa", value = "abun", 9:(ncol(TDFD_IBC_data$abundance)))
-abun_ibc.tidy <- abun_ibc.tidy[abun_ibc.tidy$abun !=0, ]
-abun_ibc.tidy.G1 <- abun_ibc.tidy[abun_ibc.tidy$group == "UnCont1", ]
-abun_ibc.tidy.G3 <- abun_ibc.tidy[abun_ibc.tidy$group == "Cont", ]
-
-# Harmonization of scarcity tidy table
-Si_global <- Si.tidy %>%
-  mutate(group.site = ifelse(Si.tidy$site %in% TDFD_IBC_data$abundance$cd_opecont[TDFD_IBC_data$abundance$group == "UnCont1"], "UnCont1",
-                             ifelse(Si.tidy$site %in% TDFD_IBC_data$abundance$cd_opecont[TDFD_IBC_data$abundance$group == "Cont"], "Cont", NA))) %>%
-  mutate(inverse.Si = 1 - Si.tidy$Si) %>%
-  group_by(species, group.site) %>%
-  summarize(Si = mean(inverse.Si)) %>%
-  as.data.frame()
-
-Si_global <-   Si_global %>%
-  mutate(group.site.color = ifelse(Si_global$species %in% TDFD_IBC_data$info_species$species[TDFD_IBC_data$info_species$group_site == "UnCont1"], "#6699FF",
-                                   ifelse(Si_global$species %in% TDFD_IBC_data$info_species$species[TDFD_IBC_data$info_species$group_site == "Cont"], "#FF6666",
-                                          ifelse(Si_global$species %in% TDFD_IBC_data$info_species$species[TDFD_IBC_data$info_species$group_site == "Common"], "#999999", NA)))) %>%
-  arrange(Si) %>%
-  as.data.frame()
-
-# Select taxa specific to UnCont1 with value > to 40th percentile
-Si.G1 <- Si_global[Si_global$group.site == "UnCont1", ]
-Si.G1$species <- factor(Si.G1$species, levels = Si.G1$species)
-Si.G1.40perc <- Si.G1[Si.G1$Si >= quantile(Si.G1$Si, probs = seq(0, 1, 0.1))[5], ]
-
-# Select taxa specific to Cont with scarcity > to 40th percentile
-Si.G3 <- Si_global[Si_global$group.site == "Cont", ]
-Si.G3$species <- factor(Si.G3$species, levels = Si.G3$species)
-Si.G3.40perc <- Si.G3[Si.G3$Si >= quantile(Si.G3$Si, probs = seq(0, 1, 0.1))[5], ]
-
-# Identify specific taxa to Uncont1 and Cont and common to both with scarcity > to 40th percentile
-taxa.Si.G1 <- setdiff(Si.G1.40perc$species, Si.G3.40perc$species)
-taxa.Si.G3 <- setdiff(Si.G3.40perc$species, Si.G1.40perc$species)
-taxa.Si.common <- intersect(Si.G3.40perc$species, Si.G1.40perc$species)
-
-# Add informations to the PCoA table need to performe Fig.2
-pcoa1 <- data.frame(species = rownames(pcoa0$vectors), pcoa0$vectors[, c(1:2)])
-pcoa1 <- pcoa1 %>%
-  mutate(clust.color = ifelse(pcoa1$species %in% names(fac[fac == 1]), "#4DAC26",
-                              ifelse(pcoa1$species %in% names(fac[fac == 2]), "#BB9D00", 
-                                     ifelse(pcoa1$species %in% names(fac[fac == 3]), "#FDB863",
-                                            ifelse(pcoa1$species %in% names(fac[fac == 4]), "#D01C8B",
-                                                   ifelse(pcoa1$species %in% names(fac[fac == 5]), "#B8E186",
-                                                          ifelse(pcoa1$species %in% names(fac[fac == 6]), "#BF812D",
-                                                                 ifelse(pcoa1$species %in% names(fac[fac == 7]), "#F1B6DA",
-                                                                        ifelse(pcoa1$species %in% names(fac[fac == 8]), "#BABABA",
-                                                                               ifelse(pcoa1$species %in% names(fac[fac == 9]), "#404040",
-                                                                                      ifelse(pcoa1$species %in% names(fac[fac == 10]), "#FDE725FF", NA))))))))))) %>%
-  mutate(clust = ifelse(pcoa1$species %in% names(fac[fac == 1]), "FG5",
-                        ifelse(pcoa1$species %in% names(fac[fac == 2]), "FG9", 
-                               ifelse(pcoa1$species %in% names(fac[fac == 3]), "FG4",
-                                      ifelse(pcoa1$species %in% names(fac[fac == 4]), "FG6",
-                                             ifelse(pcoa1$species %in% names(fac[fac == 5]), "FG7",
-                                                    ifelse(pcoa1$species %in% names(fac[fac == 6]), "FG10",
-                                                           ifelse(pcoa1$species %in% names(fac[fac == 7]), "FG8",
-                                                                  ifelse(pcoa1$species %in% names(fac[fac == 8]), "FG3",
-                                                                         ifelse(pcoa1$species %in% names(fac[fac == 9]), "FG2",
-                                                                                ifelse(pcoa1$species %in% names(fac[fac == 10]), "FG1", NA))))))))))) %>%
-  mutate(id = "cluster") %>%
-  mutate(Si.40perc.color = ifelse(pcoa1$species %in% taxa.Si.G1, "#6699FF", 
-                                  ifelse(pcoa1$species %in% taxa.Si.G3, "#FF6666", 
-                                         ifelse(pcoa1$species %in% taxa.Si.common, "#404040", "#CCCCCC")))) %>%
-  mutate(Si.40perc.pch = ifelse(pcoa1$species %in% taxa.Si.G1, 17, 
-                                ifelse(pcoa1$species %in% taxa.Si.G3, 17, 
-                                       ifelse(pcoa1$species %in% taxa.Si.common, 17, 19)))) 
-pcoa1 <- pcoa1 %>%
-  mutate(Si.40perc.occurrence = ifelse(pcoa1$Si.40perc.color == "#6699FF", "UnCont1", 
-                                       ifelse(pcoa1$Si.40perc.color == "#FF6666", "Cont", 
-                                              ifelse(pcoa1$Si.40perc.color == "#404040", "Common", "Rare")))) %>%
-  select(species, clust, clust.color, Si.40perc.color, Si.40perc.pch, Si.40perc.occurrence, id, Axis.1, Axis.2)
-pcoa1$clust <- factor(pcoa1$clust, levels = c("FG1", "FG2", "FG3", "FG4", "FG5", "FG6", "FG7", "FG8", "FG9", "FG10"))
-pcoa1$clust.color <- factor(pcoa1$clust.color, levels = unique(pcoa1$clust.color)[c(10, 9, 8, 3, 1, 4, 7, 5, 6, 2)])
-pcoa1$Si.40perc.color <- factor(pcoa1$Si.40perc.color, levels = unique(pcoa1$Si.40perc.color)[c(2, 1, 3, 4)])
-pcoa1$Si.40perc.occurrence <- factor(pcoa1$Si.40perc.occurrence, levels = unique(pcoa1$Si.40perc.occurrence)[c(2, 1, 3, 4)])
-
-# Estimation of the convex hull for each functional group according to the first two axis of PCoA
-hull_hc <- pcoa1 %>%
-  group_by(clust) %>%
-  slice(chull(Axis.1, Axis.2))
-
-# Plot of the PCoA with convex hulles
-gplot.pcoa <- ggplot(pcoa1, aes(x = Axis.1, y = Axis.2)) +
-  geom_point(shape = 19, size = 2, col = pcoa1$Si.40perc.color)
-gplot.pcoa <- gplot.pcoa + aes(fill = factor(clust)) + 
-  geom_polygon(data = hull_hc, alpha = 0.5) +
-  scale_fill_manual(values = as.character(unique(pcoa1$clust.color)[c(10, 9, 8, 3, 1, 4, 7, 5, 6, 2)])) +
-  geom_point(shape = 19, size = 2, col = pcoa1$Si.40perc.color) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(),
-        legend.position = "none",
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_text(size = 12)) +
-  ylim(-7.5, 5) +
-  labs(x = "PCoA axis 1", y = "PCoA axis 2") +
-  geom_text(x = 1.5, y = -4.5, label = "FG2", size = 4) +
-  geom_segment(aes(x = 1.2, xend = 0.9, y = -4.5, yend = -4.8), colour = "black", linetype = "solid")
-
-# Legend of the UnCont1, Cont, Common, and Rare species
-legend_occurrence_plot <- ggplot(pcoa1, aes(x = Axis.1, y = Axis.2, color = Si.40perc.occurrence)) +
-  geom_point(size = 2) + 
-  scale_color_manual(values = levels(pcoa1$Si.40perc.color)) +
-  theme_bw() +
-  theme_void() +
-  theme(panel.grid.minor = element_blank(),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 12))
-legendoccurrence <- plot_grid(get_legend(legend_occurrence_plot + theme(legend.position = "left")))
-
-# Legend of functional groups determined by cluster analysis
-legend_FG <- data.frame(site = levels(pcoa1$clust), value = "cluster", group = levels(pcoa1$clust.color))
-legend_FG$site <- factor(legend_FG$site, levels = unique(legend_FG$site))
-legend_FG_plot <- ggplot(legend_FG, aes(value, group, fill = factor(site))) +
-  geom_tile(alpha = 0.7) +
-  theme_void() +
-  theme(legend.title = element_blank(),
-        legend.text = element_text(size = 12)) +
-  scale_fill_manual(values = as.character(legend_FG$group), name = "Occurrence")  
-legendFG <- plot_grid(get_legend(legend_FG_plot + theme(legend.position = "left")))
-
-# Build Fig.2
-Fig2 <- gplot.pcoa +
-  annotation_custom(grob = ggplotGrob(legendoccurrence), xmin = -4, ymin = -7.65, xmax = -5.4, ymax = -5.2) +
-  annotation_custom(grob = ggplotGrob(legendFG), xmin = -6.5, ymin = -7, xmax = -6.8, ymax = -2.8)
-
-# Save as tiff file Fig.2 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_Fig2.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
-print(Fig2)
-dev.off()
-```
-![Figure 2](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_Fig2.png)
-
-## Figure S1
-```{r, eval = FALSE}
-sac1 <- specaccum(TDFD_IBC_data$abundance[ ,-c(1:8)], method = "exact", gamma = "jack1")
-sac2 <- specaccum(TDFD_IBC_data$abundance[ ,-c(1:8)], method = "random", gama = "jack1", permutations = 9999)
-
-# Save as tiff file Fig.S1 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS1.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
-plot(sac2, ci.type = "poly", lwd = 2, ci.lty = 0, ci.col = "lightgray", ylab = "Species", las = 1)
-boxplot(sac2, col = "yellow", add = TRUE)
-dev.off()
-```
-![Figure S1](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS1.png)
-
-## Figure S2
-```{r, eval = FALSE}
-pcoa2 <- as.data.frame(pcoa0$vectors)
-pcoa2.G1 <- pcoa2[rownames(pcoa2) %in% unique(abun_ibc.tidy$taxa[abun_ibc.tidy$group == "UnCont1"]), c(1, 2)]
-pcoa2.G1$group.site <- "UnCont1"
-pcoa2.G1$species <- rownames(pcoa2.G1)
-pcoa2.G2 <- pcoa2[rownames(pcoa2) %in% unique(abun_ibc.tidy$taxa[abun_ibc.tidy$group == "UnCont2"]), c(1, 2)]
-pcoa2.G2$group.site <- "UnCont2"
-pcoa2.G2$species <- rownames(pcoa2.G2)
-pcoa2.G3 <- pcoa2[rownames(pcoa2) %in% unique(abun_ibc.tidy$taxa[abun_ibc.tidy$group == "Cont"]), c(1, 2)]
-pcoa2.G3$group.site <- "Cont"
-pcoa2.G3$species <- rownames(pcoa2.G3)
-pcoa2.G1G2G3 <- bind_rows(pcoa2.G1, pcoa2.G2, pcoa2.G3) 
-pcoa2.G1G2G3 <- pcoa2.G1G2G3 %>%
-  mutate(clust.color = ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 1]), "#4DAC26",
-                              ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 2]), "#BB9D00",
-                                     ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 3]), "#FDB863",
-                                            ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 4]), "#D01C8B",
-                                                   ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 5]), "#B8E186",
-                                                          ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 6]), "#BF812D",
-                                                                 ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 7]), "#F1B6DA",
-                                                                        ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 8]), "#BABABA",
-                                                                               ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 9]), "#404040",
-                                                                                      ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 10]), "#FDE725FF", NA))))))))))) %>%
-  mutate(clust = ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 1]), "FG1",
-                        ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 2]), "FG2",
-                               ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 3]), "FG3",
-                                      ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 4]), "FG4",
-                                             ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 5]), "FG5",
-                                                    ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 6]), "FG6",
-                                                           ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 7]), "FG7",
-                                                                  ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 8]), "FG8",
-                                                                         ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 9]), "FG9",
-                                                                                ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 10]), "FG10", NA))))))))))) %>%
-  mutate(group.color = ifelse(pcoa2.G1G2G3$group.site == "UnCont1", "#6699FF",
-                              ifelse(pcoa2.G1G2G3$group.site == "UnCont2", "#00BA42",
-                                     ifelse(pcoa2.G1G2G3$group.site == "Cont", "#FF6666", NA)))) %>%
-  mutate(id = "cluster") %>%
-select(species, group.site, group.color, clust.color, clust, id, Axis.1, Axis.2)
-pcoa2.G1G2G3$clust <- factor(pcoa2.G1G2G3$clust, levels = c("FG1", "FG2", "FG3", "FG4", "FG5", "FG6", "FG7", "FG8", "FG9", "FG10"))
-pcoa2.G1G2G3$group.site <- factor(pcoa2.G1G2G3$group.site, levels = c("UnCont1", "UnCont2", "Cont"))
-
-# Plot of PCoA with four panels #
-# Panel A: PCoA of UnCont1 #
-# Panel B: PCoA of UnCont2 #
-# Panel C: PCoA of Cont #
-# Panel D: PCoA of UnCont1, UnCont2, Cont #
-# Estimation of the convex hull for each functional group for group of sites (i.e., UnCont1, UntCont2, Cont)
-hull_group <- pcoa2.G1G2G3 %>%
-  group_by(group.site) %>%
-  slice(chull(Axis.1, Axis.2))
-
-# Plot for UnCont1
-my_text1 <- "UnCont1"
-my_grob1 <- grid.text(my_text1, x = 0.09, y = 0.05, gp = gpar(col = "black", fontsize = 10))
-gplot1 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "UnCont1", ], aes(x = Axis.1, y = Axis.2)) +
-  geom_point(size = 2)
-gplot1 <- gplot1 + aes(fill = factor(group.site)) + 
-  geom_polygon(data = hull_group[hull_group$group.site == "UnCont1", ], alpha = 0.5) +
-  scale_fill_manual(values = "#6699FF") +
-  geom_point(shape = 19, size = 2, col = "black") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(),
-        legend.title = element_blank(),
-        legend.position = "none") +
-  labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "A") +
-  xlim(-7.2, 5) +
-  ylim(-5, 4) +
-  annotation_custom(my_grob1)
-
-# Plot for UnCont2
-my_text2 <- "UnCont2"
-my_grob2 <- grid.text(my_text2, x = 0.09, y = 0.05, gp = gpar(col = "black", fontsize = 10))
-gplot2 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "UnCont2", ], aes(x = Axis.1, y = Axis.2)) +
-  geom_point(size = 2)
-gplot2 <- gplot2 + aes(fill = factor(group.site)) + 
-  geom_polygon(data = hull_group[hull_group$group.site == "UnCont2", ], alpha = 0.5) +
-  scale_fill_manual(values = "#00BA42") +
-  geom_point(shape = 19, size = 2, col = "black") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(),
-        legend.title = element_blank(),
-        legend.position = "none") +
-  labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "B") +
-  xlim(-7.2, 5) +
-  annotation_custom(my_grob2)
-
-# Plot for Cont
-my_text3 <- "Cont"
-my_grob3 <- grid.text(my_text3, x = 0.06, y = 0.05, gp = gpar(col = "black", fontsize = 10))
-gplot3 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "Cont", ], aes(x = Axis.1, y = Axis.2)) +
-  geom_point(size = 2)
-gplot3 <- gplot3 + aes(fill = factor(group.site)) + 
-  geom_polygon(data = hull_group[hull_group$group.site == "Cont", ], alpha = 0.5) +
-  scale_fill_manual(values = "#FF6666") +
-  geom_point(shape = 19, size = 2, col = "black") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(),
-        legend.title = element_blank(),
-        legend.position = "none") +
-  labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "C") +
-  xlim(-7.2, 5) +
-  annotation_custom(my_grob3)
-
-# Plot for UnCont1-UnCont2-Cont
-my_textall <- "UnCont1 vs. UnCont2 vs. Cont"
-my_groball <- grid.text(my_textall, x = 0.255, y = 0.05, gp = gpar(col = "black", fontsize = 10))
-gplotall <- ggplot(pcoa2.G1G2G3, aes(x = Axis.1, y = Axis.2)) +
-  geom_point(size = 2)
-gplotall <- gplotall + aes(fill = factor(group.site)) + 
-  geom_polygon(data = hull_group, alpha = 0.3) +
-  scale_fill_manual(values = c("#6699FF", "#00BA42", "#FF6666")) +
-  geom_point(shape = 19, size = 2, col = "black") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(),
-        legend.title = element_blank(),
-        legend.position = "none") +
-  labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "D") +
-  xlim(-7.2, 5) +
-  annotation_custom(my_groball)
-
-# Let's glue the different plots together to build Fig.S2
-design <- c(
-  area(1, 1, 1),
-  area(2, 1, 2),
-  area(1, 2, 1),
-  area(2, 2, 2)
-)
-plot(design)
-
-FigS2 <- gplot1 + gplot3 + gplot2 + gplotall +
-  plot_layout(design = design, widths = c(1, 1, 1, 1), heights = c(1, 1, 1, 1))
-
-# Save as tiff file Fig.S2 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS2.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
-print(FigS2)
-dev.off()
-```
-![Figure S2](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS2.png)
-
-## Figure S3
 | <span> |
 | :------------------------------------------------------------------------------------------------------------ |
 | **NOTE:** This part is based on the scarcity table calculated at the section 10 'Computation of scarcity at local scale' of this tutorial |
@@ -959,67 +653,217 @@ design <- c(
 )
 plot(design)
 
-# Build Fig.S3
-FigS3 <- scarcity.g1 + scarcity.g3 +
+# Build Fig.2
+Fig2 <- scarcity.g1 + scarcity.g3 +
   plot_layout(design = design, widths = c(1, 1), heights = c(1, 1))
 
-# Save as tiff file Fig.S3 with a resolution of 300 ppi
+# Save as tiff file Fig.2 with a resolution of 300 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS3.tiff"),
+tiff(paste0(pathFig, "/Rplot_trait_x_IBC_Fig2.tiff"),
      units = "in", width = 10, height = 8, res = 300)
-print(FigS3)
+print(Fig2)
 dev.off()
 ```
-![Figure S3](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS3.png)
+![Figure 2](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_Fig2.png)
 
-## Figure S4
+## Figure 3 
+### Figure 3 - Panel A
 ```{r, eval = FALSE}
-dend <- hc.pcoa %>%
-  as.dendrogram() %>%
-  set("leaves_pch", c(19)) %>% 
-  set("leaves_cex", c(1)) %>%
-  set("leaves_col", "#FFFFFF") %>%
-  set("labels_colors", "#404040") %>%
-  set("labels_cex", c(0.5)) %>%
-  set("branches_lwd", c(0.5)) %>%
-  set("branches_lty", c(1)) %>%
-  raise.dendrogram(1)
-gdend <- as.ggdend(dend, type = "rectangle")
-gdend <- ggplot(gdend, horiz = TRUE) 
-gdend <- gdend + geom_segment(aes(x = 1, xend = 97, y = 6.5, yend = 6.5), colour = "#E69F00", linetype = "dashed")
-gdend <- gdend + ylim(max(get_branches_heights(dend)), -8)
-FigS4 <- gdend +
-  geom_segment(aes(x = 87.5, xend = 97, y = -4.5, yend = -4.5), colour = "#FDE725FF", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 92.25, y = -5.8, label = "FG1") +
-  geom_segment(aes(x = 80.5, xend = 87, y = -4.5, yend = -4.5), colour = "#404040", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 83.75, y = -5.8, label = "FG2") +
-  geom_segment(aes(x = 67.5, xend = 80, y = -4.5, yend = -4.5), colour = "#BABABA", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 73.75, y = -5.8, label = "FG3") +
-  geom_segment(aes(x = 49.5, xend = 67, y = -4.5, yend = -4.5), colour = "#FDB863", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 58.25, y = -5.8, label = "FG4") +
-  geom_segment(aes(x = 38.5, xend = 49, y = -4.5, yend = -4.5), colour = "#4DAC26", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 43.75, y = -5.8, label = "FG5") +
-  geom_segment(aes(x = 26.5, xend = 38, y = -4.5, yend = -4.5), colour = "#D01C8B", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 32.25, y = -5.8, label = "FG6") +
-  geom_segment(aes(x = 22.5, xend = 26, y = -4.5, yend = -4.5), colour = "#F1B6DA", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 24.25, y = -5.8, label = "FG7") +
-  geom_segment(aes(x = 12.5, xend = 22, y = -4.5, yend = -4.5), colour = "#B8E186", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 17.25, y = -5.8, label = "FG8") +
-  geom_segment(aes(x = 6.5, xend = 12, y = -4.5, yend = -4.5), colour = "#BF812D", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 8.75, y = -5.8, label = "FG9") +
-  geom_segment(aes(x = 0, xend = 6, y = -4.5, yend = -4.5), colour = "#BB9D00", linetype = "solid", size = 3, alpha = 0.7) +
-  annotate(geom = "text", x = 3, y = -5.8, label = "FG10")
+# PCoA on the distance matrix computes from trait table
+pcoa0 <- pcoa(e.dist, correction = "cailliez")
+hc.pcoa <- hclust(dist(pcoa0$vectors[, c(1, 2)]), method = "ward.D2")
+X11()
+plot(hc.pcoa, hang = -1)
+rect.hclust(hc.pcoa, k = 10)
+fac <- cutree(hc.pcoa, k = 10)
 
-# Save as tiff file Fig.S4 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS4.tiff"),
+# Transform abundance table in tidy format
+abun_ibc.tidy <- TDFD_IBC_data$abundance %>% gather(key = "taxa", value = "abun", 9:(ncol(TDFD_IBC_data$abundance)))
+abun_ibc.tidy <- abun_ibc.tidy[abun_ibc.tidy$abun !=0, ]
+abun_ibc.tidy.G1 <- abun_ibc.tidy[abun_ibc.tidy$group == "UnCont1", ]
+abun_ibc.tidy.G3 <- abun_ibc.tidy[abun_ibc.tidy$group == "Cont", ]
+
+# Harmonization of scarcity tidy table
+Si_global <- Si.tidy %>%
+  mutate(group.site = ifelse(Si.tidy$site %in% TDFD_IBC_data$abundance$cd_opecont[TDFD_IBC_data$abundance$group == "UnCont1"], "UnCont1",
+                             ifelse(Si.tidy$site %in% TDFD_IBC_data$abundance$cd_opecont[TDFD_IBC_data$abundance$group == "Cont"], "Cont", NA))) %>%
+  mutate(inverse.Si = 1 - Si.tidy$Si) %>%
+  group_by(species, group.site) %>%
+  summarize(Si = mean(inverse.Si)) %>%
+  as.data.frame()
+Si_global <-   Si_global %>%
+  mutate(group.site.color = ifelse(Si_global$species %in% TDFD_IBC_data$info_species$species[TDFD_IBC_data$info_species$group_site == "UnCont1"], "#6699FF",
+                                   ifelse(Si_global$species %in% TDFD_IBC_data$info_species$species[TDFD_IBC_data$info_species$group_site == "Cont"], "#FF6666",
+                                          ifelse(Si_global$species %in% TDFD_IBC_data$info_species$species[TDFD_IBC_data$info_species$group_site == "Common"], "#999999", NA)))) %>%
+  arrange(Si) %>%
+  as.data.frame()
+
+# Select taxa specific to UnCont1 with value > to 40th percentile
+Si.G1 <- Si_global[Si_global$group.site == "UnCont1", ]
+Si.G1$species <- factor(Si.G1$species, levels = Si.G1$species)
+Si.G1.40perc <- Si.G1[Si.G1$Si >= quantile(Si.G1$Si, probs = seq(0, 1, 0.1))[5], ]
+
+# Select taxa specific to Cont with scarcity > to 40th percentile
+Si.G3 <- Si_global[Si_global$group.site == "Cont", ]
+Si.G3$species <- factor(Si.G3$species, levels = Si.G3$species)
+Si.G3.40perc <- Si.G3[Si.G3$Si >= quantile(Si.G3$Si, probs = seq(0, 1, 0.1))[5], ]
+
+# Identify specific taxa to Uncont1 and Cont and common to both with scarcity > to 40th percentile
+taxa.Si.G1 <- setdiff(Si.G1.40perc$species, Si.G3.40perc$species)
+taxa.Si.G3 <- setdiff(Si.G3.40perc$species, Si.G1.40perc$species)
+taxa.Si.common <- intersect(Si.G3.40perc$species, Si.G1.40perc$species)
+
+# Add information to the PCoA table need to perform Fig.3
+pcoa1 <- data.frame(species = rownames(pcoa0$vectors), pcoa0$vectors[, c(1:2)])
+pcoa1 <- pcoa1 %>%
+  mutate(clust.color = ifelse(pcoa1$species %in% names(fac[fac == 1]), "#4DAC26",
+                              ifelse(pcoa1$species %in% names(fac[fac == 2]), "#BB9D00", 
+                                     ifelse(pcoa1$species %in% names(fac[fac == 3]), "#FDB863",
+                                            ifelse(pcoa1$species %in% names(fac[fac == 4]), "#D01C8B",
+                                                   ifelse(pcoa1$species %in% names(fac[fac == 5]), "#B8E186",
+                                                          ifelse(pcoa1$species %in% names(fac[fac == 6]), "#BF812D",
+                                                                 ifelse(pcoa1$species %in% names(fac[fac == 7]), "#F1B6DA",
+                                                                        ifelse(pcoa1$species %in% names(fac[fac == 8]), "#BABABA",
+                                                                               ifelse(pcoa1$species %in% names(fac[fac == 9]), "#404040",
+                                                                                      ifelse(pcoa1$species %in% names(fac[fac == 10]), "#FDE725FF", NA))))))))))) %>%
+  mutate(clust = ifelse(pcoa1$species %in% names(fac[fac == 1]), "FG5",
+                        ifelse(pcoa1$species %in% names(fac[fac == 2]), "FG9", 
+                               ifelse(pcoa1$species %in% names(fac[fac == 3]), "FG4",
+                                      ifelse(pcoa1$species %in% names(fac[fac == 4]), "FG6",
+                                             ifelse(pcoa1$species %in% names(fac[fac == 5]), "FG7",
+                                                    ifelse(pcoa1$species %in% names(fac[fac == 6]), "FG10",
+                                                           ifelse(pcoa1$species %in% names(fac[fac == 7]), "FG8",
+                                                                  ifelse(pcoa1$species %in% names(fac[fac == 8]), "FG3",
+                                                                         ifelse(pcoa1$species %in% names(fac[fac == 9]), "FG2",
+                                                                                ifelse(pcoa1$species %in% names(fac[fac == 10]), "FG1", NA))))))))))) %>%
+  mutate(id = "cluster") %>%
+  mutate(Si.40perc.color = ifelse(pcoa1$species %in% taxa.Si.G1, "#6699FF", 
+                                  ifelse(pcoa1$species %in% taxa.Si.G3, "#FF6666", 
+                                         ifelse(pcoa1$species %in% taxa.Si.common, "#404040", "#CCCCCC")))) %>%
+  mutate(Si.40perc.pch = ifelse(pcoa1$species %in% taxa.Si.G1, 17, 
+                                ifelse(pcoa1$species %in% taxa.Si.G3, 17, 
+                                       ifelse(pcoa1$species %in% taxa.Si.common, 17, 19)))) 
+pcoa1 <- pcoa1 %>%
+  mutate(Si.40perc.occurrence = ifelse(pcoa1$Si.40perc.color == "#6699FF", "UnCont1", 
+                                       ifelse(pcoa1$Si.40perc.color == "#FF6666", "Cont", 
+                                              ifelse(pcoa1$Si.40perc.color == "#404040", "Common", "Rare")))) %>%
+  select(species, clust, clust.color, Si.40perc.color, Si.40perc.pch, Si.40perc.occurrence, id, Axis.1, Axis.2)
+pcoa1$clust <- factor(pcoa1$clust, levels = c("FG1", "FG2", "FG3", "FG4", "FG5", "FG6", "FG7", "FG8", "FG9", "FG10"))
+pcoa1$clust.color <- factor(pcoa1$clust.color, levels = unique(pcoa1$clust.color)[c(10, 9, 8, 3, 1, 4, 7, 5, 6, 2)])
+pcoa1$Si.40perc.color <- factor(pcoa1$Si.40perc.color, levels = unique(pcoa1$Si.40perc.color)[c(2, 1, 3, 4)])
+pcoa1$Si.40perc.occurrence <- factor(pcoa1$Si.40perc.occurrence, levels = unique(pcoa1$Si.40perc.occurrence)[c(2, 1, 3, 4)])
+
+# Estimation of the convex hull for each functional group according to the first two axis of PCoA
+hull_hc <- pcoa1 %>%
+  group_by(clust) %>%
+  slice(chull(Axis.1, Axis.2))
+
+# Plot of the PCoA with convex hulles
+gplot.pcoa <- ggplot(pcoa1, aes(x = Axis.1, y = Axis.2)) +
+  geom_point(shape = 19, size = 2, col = pcoa1$Si.40perc.color)
+gplot.pcoa <- gplot.pcoa + aes(fill = factor(clust)) + 
+  geom_polygon(data = hull_hc, alpha = 0.5) +
+  scale_fill_manual(values = as.character(unique(pcoa1$clust.color)[c(10, 9, 8, 3, 1, 4, 7, 5, 6, 2)])) +
+  geom_point(shape = 19, size = 2, col = pcoa1$Si.40perc.color) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        legend.position = "none",
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12)) +
+  ylim(-7.5, 5) +
+  labs(x = "PCoA axis 1", y = "PCoA axis 2") +
+  geom_text(x = 1.5, y = -4.5, label = "FG2", size = 4) +
+  geom_segment(aes(x = 1.2, xend = 0.9, y = -4.5, yend = -4.8), colour = "black", linetype = "solid")
+
+# Legend of the UnCont1, Cont, Common, and Rare species
+legend_occurrence_plot <- ggplot(pcoa1, aes(x = Axis.1, y = Axis.2, color = Si.40perc.occurrence)) +
+  geom_point(size = 2) + 
+  scale_color_manual(values = levels(pcoa1$Si.40perc.color)) +
+  theme_bw() +
+  theme_void() +
+  theme(panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12))
+legendoccurrence <- plot_grid(get_legend(legend_occurrence_plot + theme(legend.position = "left")))
+
+# Legend of functional groups determined by cluster analysis
+legend_FG <- data.frame(site = levels(pcoa1$clust), value = "cluster", group = levels(pcoa1$clust.color))
+legend_FG$site <- factor(legend_FG$site, levels = unique(legend_FG$site))
+legend_FG_plot <- ggplot(legend_FG, aes(value, group, fill = factor(site))) +
+  geom_tile(alpha = 0.7) +
+  theme_void() +
+  theme(legend.title = element_blank(),
+        legend.text = element_text(size = 12)) +
+  scale_fill_manual(values = as.character(legend_FG$group), name = "Occurrence")  
+legendFG <- plot_grid(get_legend(legend_FG_plot + theme(legend.position = "left")))
+
+# Build Fig.3A
+Fig3A <- gplot.pcoa +
+  annotation_custom(grob = ggplotGrob(legendoccurrence), xmin = -4, ymin = -7.65, xmax = -5.4, ymax = -5.2) +
+  annotation_custom(grob = ggplotGrob(legendFG), xmin = -6.5, ymin = -7, xmax = -6.8, ymax = -2.8)
+```
+
+### Figure 3 - Panel B
+```{r, eval = FALSE}
+# Preparing the table for run plot
+table_percent <- data.frame(group = rep(c("UnCont1", "UnCont1", "Cont", "Cont"), 2), 
+                            type = rep(c("specific", "common"), 4),
+                            analysis = c(rep("contribution", 4), rep("originality", 4)),
+                            values = c(round((contrib_mean_UnCont1 * 100) / (contrib_mean_common_UnCont1 + contrib_mean_UnCont1), digits = 1), 
+                                       round((contrib_mean_common_UnCont1 * 100) / (contrib_mean_common_UnCont1 + contrib_mean_UnCont1), digits = 1),
+                                       round((contrib_mean_Cont * 100) / (contrib_mean_common_Cont + contrib_mean_Cont), digits = 1),
+                                       round((contrib_mean_common_Cont * 100) / (contrib_mean_common_Cont + contrib_mean_Cont), digits = 1),
+                                       round((orig_mean_UnCont1 * 100) / (orig_mean_common_UnCont1 + orig_mean_UnCont1), digits = 1),
+                                       round((orig_mean_common_UnCont1 * 100) / (orig_mean_common_UnCont1 + orig_mean_UnCont1), digits = 1),
+                                       round((orig_mean_Cont * 100) / (orig_mean_common_Cont + orig_mean_Cont), digits = 1),
+                                       round((orig_mean_common_Cont * 100) / (orig_mean_common_Cont + orig_mean_Cont), digits = 1)),
+                            lab_ypos = c(95.35, 45.35, 94.95, 44.95, 75.6, 24.8, 70.2, 26.6))
+table_percent$group <- factor(table_percent$group, levels = c("UnCont1", "Cont"))
+table_percent$type <- factor(table_percent$type, levels = c("specific", "common"))
+
+# Functional contribution and functional originality for dominant species common to UnCont1 and Cont and for dominant species specific
+Fig3B <- ggplot(table_percent, aes(x = group, y = values)) +
+  geom_col(aes(fill = type), width = 0.7) +
+  geom_text(aes(y = lab_ypos, label = values, group = type), size = 5, colour = ifelse(table_percent$lab_ypos < 49, "white", "black")) +
+  scale_fill_manual(values = c("#0066CC", "#FF0000","#404040")) +
+  theme_bw() +
+  theme(panel.grid.major = element_line(colour = "white"),
+        panel.grid.minor = element_line(colour = "white"),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        strip.text.x = element_text(size = 12),
+        legend.position = "none") +
+  labs(x = "", y = "percentages") +
+  facet_grid(. ~ analysis) +
+  labs(tag = "B")
+```
+
+### Figure 3 - Panels A-B
+```{r, eval = FALSE}
+# Let's glue the different plots together to build Fig.3
+design <- c(
+  area(1, 1, 5, 1),
+  area(1, 2, 1, 2),
+  area(2, 2, 4, 2),
+  area(5, 2, 5, 2)
+)
+Fig3 <- Fig3A + plot_spacer() + Fig3B + plot_spacer() +
+  plot_layout(design = design, widths = c(0.7, 0.3), heights = c(0.5, 0.5))
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures"
+tiff(paste0(pathFig, "/Rplot_trait_x_IBC_Fig3.tiff"),
      units = "in", width = 10, height = 8, res = 300)
-print(FigS4)
+print(Fig3)
 dev.off()
 ```
-![Figure S4](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS4.png)
+![Figure 3](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_Fig3.png)
 
-## Figure S5
+## Figure S1
 ```{r, eval = FALSE}
 # MRPP analysis
 mrpp1 <- mrpp(e.dist, fac)
@@ -1039,9 +883,9 @@ with(mrpp1, {
 )
 dev.off()
 ```
-![Figure S5](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS5.png)
+![Figure S1](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS1.png)
 
-## Figure S6
+## Figure S2
 ```{r, eval = FALSE}
 # Split table according each functional group of the cluster
 g1 <- trait_eltonian[rownames(trait_eltonian) %in% names(fac[fac == 10]), ]
@@ -1175,7 +1019,7 @@ table_tot <- rbind(melt.mean.g1, melt.mean.g2, melt.mean.g3, melt.mean.g4, melt.
 table_tot$id.group <- factor(as.factor(table_tot$id.group), levels(as.factor(table_tot$id.group))[c(1, 3, 4, 5, 6, 7, 8, 9, 10, 2)])
 
 # Barplot of the mean profil for each functional group
-FigS6 <- ggplot(table_tot, aes(x = as.factor(id.modality), y = value)) +
+FigS2 <- ggplot(table_tot, aes(x = as.factor(id.modality), y = value)) +
   geom_bar(stat = "identity", width = 0.8) +
   facet_grid(id.group ~ id.trait_f, scales = "free_x", space = "free_x") +
   theme_bw() +
@@ -1192,56 +1036,216 @@ FigS6 <- ggplot(table_tot, aes(x = as.factor(id.modality), y = value)) +
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
 tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS6.tiff"),
      units = "in", width = 10, height = 8, res = 300)
-print(FigS6)
+print(FigS2)
 dev.off()
 ```
-![Figure S6](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS6.png)
+![Figure S2](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS2.png)
 
-## Figure S7
+## Figure S3
 ```{r, eval = FALSE}
-# Preparing the table for run plot
-table_percent <- data.frame(group = rep(c("UnCont1", "UnCont1", "Cont", "Cont"), 2), 
-                            type = rep(c("specific", "common"), 4),
-                            analysis = c(rep("contribution", 4), rep("originality", 4)),
-                            values = c(round((contrib_mean_UnCont1 * 100) / (contrib_mean_common_UnCont1 + contrib_mean_UnCont1), digits = 1), 
-                                       round((contrib_mean_common_UnCont1 * 100) / (contrib_mean_common_UnCont1 + contrib_mean_UnCont1), digits = 1),
-                                       round((contrib_mean_Cont * 100) / (contrib_mean_common_Cont + contrib_mean_Cont), digits = 1),
-                                       round((contrib_mean_common_Cont * 100) / (contrib_mean_common_Cont + contrib_mean_Cont), digits = 1),
-                                       round((orig_mean_UnCont1 * 100) / (orig_mean_common_UnCont1 + orig_mean_UnCont1), digits = 1),
-                                       round((orig_mean_common_UnCont1 * 100) / (orig_mean_common_UnCont1 + orig_mean_UnCont1), digits = 1),
-                                       round((orig_mean_Cont * 100) / (orig_mean_common_Cont + orig_mean_Cont), digits = 1),
-                                       round((orig_mean_common_Cont * 100) / (orig_mean_common_Cont + orig_mean_Cont), digits = 1)),
-                            lab_ypos = c(95.35, 45.35, 94.95, 44.95, 75.6, 24.8, 70.2, 26.6))
-table_percent$group <- factor(table_percent$group, levels = c("UnCont1", "Cont"))
-table_percent$type <- factor(table_percent$type, levels = c("specific", "common"))
+sac1 <- specaccum(TDFD_IBC_data$abundance[ ,-c(1:8)], method = "exact", gamma = "jack1")
+sac2 <- specaccum(TDFD_IBC_data$abundance[ ,-c(1:8)], method = "random", gama = "jack1", permutations = 9999)
 
-FigS7 <- ggplot(table_percent, aes(x = group, y = values)) +
-  geom_col(aes(fill = type), width = 0.7) +
-  geom_text(aes(y = lab_ypos, label = values, group = type), size = 5) +
-  scale_fill_manual(values = c("grey80", "grey50")) +
-  theme_bw() +
-  theme(panel.grid.major = element_line(colour = "white"),
-        panel.grid.minor = element_line(colour = "white"),
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_text(size = 12),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 12),
-        strip.text.x = element_text(size = 12)) +
-  labs(x = "", y = "percentages") +
-  facet_grid(. ~ analysis)
-
-# Save as tiff file Fig.S7 with a resolution of 300 ppi
-pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS7.tiff"),
+# Save as tiff file Fig.S1 with a resolution of 300 ppi
+pathFig <- "C:/Users/benjamin/Documents/Figures" # CHANGE ME to where you want figure to be saved
+tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS1.tiff"),
      units = "in", width = 10, height = 8, res = 300)
-print(FigS7)
+plot(sac2, ci.type = "poly", lwd = 2, ci.lty = 0, ci.col = "lightgray", ylab = "Species", las = 1)
+boxplot(sac2, col = "yellow", add = TRUE)
 dev.off()
 ```
-![Figure S7](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS7.png)
+![Figure S3](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS3.png)
 
-## Figure S8
+## Figure S4
+```{r, eval = FALSE}
+pcoa2 <- as.data.frame(pcoa0$vectors)
+pcoa2.G1 <- pcoa2[rownames(pcoa2) %in% unique(abun_ibc.tidy$taxa[abun_ibc.tidy$group == "UnCont1"]), c(1, 2)]
+pcoa2.G1$group.site <- "UnCont1"
+pcoa2.G1$species <- rownames(pcoa2.G1)
+pcoa2.G2 <- pcoa2[rownames(pcoa2) %in% unique(abun_ibc.tidy$taxa[abun_ibc.tidy$group == "UnCont2"]), c(1, 2)]
+pcoa2.G2$group.site <- "UnCont2"
+pcoa2.G2$species <- rownames(pcoa2.G2)
+pcoa2.G3 <- pcoa2[rownames(pcoa2) %in% unique(abun_ibc.tidy$taxa[abun_ibc.tidy$group == "Cont"]), c(1, 2)]
+pcoa2.G3$group.site <- "Cont"
+pcoa2.G3$species <- rownames(pcoa2.G3)
+pcoa2.G1G2G3 <- bind_rows(pcoa2.G1, pcoa2.G2, pcoa2.G3) 
+pcoa2.G1G2G3 <- pcoa2.G1G2G3 %>%
+  mutate(clust.color = ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 1]), "#4DAC26",
+                              ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 2]), "#BB9D00",
+                                     ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 3]), "#FDB863",
+                                            ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 4]), "#D01C8B",
+                                                   ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 5]), "#B8E186",
+                                                          ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 6]), "#BF812D",
+                                                                 ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 7]), "#F1B6DA",
+                                                                        ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 8]), "#BABABA",
+                                                                               ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 9]), "#404040",
+                                                                                      ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 10]), "#FDE725FF", NA))))))))))) %>%
+  mutate(clust = ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 1]), "FG1",
+                        ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 2]), "FG2",
+                               ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 3]), "FG3",
+                                      ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 4]), "FG4",
+                                             ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 5]), "FG5",
+                                                    ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 6]), "FG6",
+                                                           ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 7]), "FG7",
+                                                                  ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 8]), "FG8",
+                                                                         ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 9]), "FG9",
+                                                                                ifelse(pcoa2.G1G2G3$species %in% names(fac[fac == 10]), "FG10", NA))))))))))) %>%
+  mutate(group.color = ifelse(pcoa2.G1G2G3$group.site == "UnCont1", "#6699FF",
+                              ifelse(pcoa2.G1G2G3$group.site == "UnCont2", "#00BA42",
+                                     ifelse(pcoa2.G1G2G3$group.site == "Cont", "#FF6666", NA)))) %>%
+  mutate(id = "cluster") %>%
+select(species, group.site, group.color, clust.color, clust, id, Axis.1, Axis.2)
+pcoa2.G1G2G3$clust <- factor(pcoa2.G1G2G3$clust, levels = c("FG1", "FG2", "FG3", "FG4", "FG5", "FG6", "FG7", "FG8", "FG9", "FG10"))
+pcoa2.G1G2G3$group.site <- factor(pcoa2.G1G2G3$group.site, levels = c("UnCont1", "UnCont2", "Cont"))
+
+# Plot of PCoA with four panels #
+# Panel A: PCoA of UnCont1 #
+# Panel B: PCoA of UnCont2 #
+# Panel C: PCoA of Cont #
+# Panel D: PCoA of UnCont1, UnCont2, Cont #
+# Estimation of the convex hull for each functional group for group of sites (i.e., UnCont1, UntCont2, Cont)
+hull_group <- pcoa2.G1G2G3 %>%
+  group_by(group.site) %>%
+  slice(chull(Axis.1, Axis.2))
+
+# Plot for UnCont1
+my_text1 <- "UnCont1"
+my_grob1 <- grid.text(my_text1, x = 0.09, y = 0.05, gp = gpar(col = "black", fontsize = 10))
+gplot1 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "UnCont1", ], aes(x = Axis.1, y = Axis.2)) +
+  geom_point(size = 2)
+gplot1 <- gplot1 + aes(fill = factor(group.site)) + 
+  geom_polygon(data = hull_group[hull_group$group.site == "UnCont1", ], alpha = 0.5) +
+  scale_fill_manual(values = "#6699FF") +
+  geom_point(shape = 19, size = 2, col = "black") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "none") +
+  labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "A") +
+  xlim(-7.2, 5) +
+  ylim(-5, 4) +
+  annotation_custom(my_grob1)
+
+# Plot for UnCont2
+my_text2 <- "UnCont2"
+my_grob2 <- grid.text(my_text2, x = 0.09, y = 0.05, gp = gpar(col = "black", fontsize = 10))
+gplot2 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "UnCont2", ], aes(x = Axis.1, y = Axis.2)) +
+  geom_point(size = 2)
+gplot2 <- gplot2 + aes(fill = factor(group.site)) + 
+  geom_polygon(data = hull_group[hull_group$group.site == "UnCont2", ], alpha = 0.5) +
+  scale_fill_manual(values = "#00BA42") +
+  geom_point(shape = 19, size = 2, col = "black") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "none") +
+  labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "B") +
+  xlim(-7.2, 5) +
+  annotation_custom(my_grob2)
+
+# Plot for Cont
+my_text3 <- "Cont"
+my_grob3 <- grid.text(my_text3, x = 0.06, y = 0.05, gp = gpar(col = "black", fontsize = 10))
+gplot3 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "Cont", ], aes(x = Axis.1, y = Axis.2)) +
+  geom_point(size = 2)
+gplot3 <- gplot3 + aes(fill = factor(group.site)) + 
+  geom_polygon(data = hull_group[hull_group$group.site == "Cont", ], alpha = 0.5) +
+  scale_fill_manual(values = "#FF6666") +
+  geom_point(shape = 19, size = 2, col = "black") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "none") +
+  labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "C") +
+  xlim(-7.2, 5) +
+  annotation_custom(my_grob3)
+
+# Plot for UnCont1-UnCont2-Cont
+my_textall <- "UnCont1 vs. UnCont2 vs. Cont"
+my_groball <- grid.text(my_textall, x = 0.255, y = 0.05, gp = gpar(col = "black", fontsize = 10))
+gplotall <- ggplot(pcoa2.G1G2G3, aes(x = Axis.1, y = Axis.2)) +
+  geom_point(size = 2)
+gplotall <- gplotall + aes(fill = factor(group.site)) + 
+  geom_polygon(data = hull_group, alpha = 0.3) +
+  scale_fill_manual(values = c("#6699FF", "#00BA42", "#FF6666")) +
+  geom_point(shape = 19, size = 2, col = "black") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "none") +
+  labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "D") +
+  xlim(-7.2, 5) +
+  annotation_custom(my_groball)
+
+# Let's glue the different plots together to build Fig.S2
+design <- c(
+  area(1, 1, 1),
+  area(2, 1, 2),
+  area(1, 2, 1),
+  area(2, 2, 2)
+)
+plot(design)
+
+FigS4 <- gplot1 + gplot3 + gplot2 + gplotall +
+  plot_layout(design = design, widths = c(1, 1, 1, 1), heights = c(1, 1, 1, 1))
+
+# Save as tiff file Fig.S2 with a resolution of 300 ppi
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
+tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS4.tiff"),
+     units = "in", width = 10, height = 8, res = 300)
+print(FigS4)
+dev.off()
+```
+![Figure S4](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS4.png)
+
+## Figure S5
+```{r, eval = FALSE}
+dend <- hc.pcoa %>%
+  as.dendrogram() %>%
+  set("leaves_pch", c(19)) %>% 
+  set("leaves_cex", c(1)) %>%
+  set("leaves_col", "#FFFFFF") %>%
+  set("labels_colors", "#404040") %>%
+  set("labels_cex", c(0.5)) %>%
+  set("branches_lwd", c(0.5)) %>%
+  set("branches_lty", c(1)) %>%
+  raise.dendrogram(1)
+gdend <- as.ggdend(dend, type = "rectangle")
+gdend <- ggplot(gdend, horiz = TRUE) 
+gdend <- gdend + geom_segment(aes(x = 1, xend = 97, y = 6.5, yend = 6.5), colour = "#E69F00", linetype = "dashed")
+gdend <- gdend + ylim(max(get_branches_heights(dend)), -8)
+FigS5 <- gdend +
+  geom_segment(aes(x = 87.5, xend = 97, y = -4.5, yend = -4.5), colour = "#FDE725FF", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 92.25, y = -5.8, label = "FG1") +
+  geom_segment(aes(x = 80.5, xend = 87, y = -4.5, yend = -4.5), colour = "#404040", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 83.75, y = -5.8, label = "FG2") +
+  geom_segment(aes(x = 67.5, xend = 80, y = -4.5, yend = -4.5), colour = "#BABABA", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 73.75, y = -5.8, label = "FG3") +
+  geom_segment(aes(x = 49.5, xend = 67, y = -4.5, yend = -4.5), colour = "#FDB863", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 58.25, y = -5.8, label = "FG4") +
+  geom_segment(aes(x = 38.5, xend = 49, y = -4.5, yend = -4.5), colour = "#4DAC26", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 43.75, y = -5.8, label = "FG5") +
+  geom_segment(aes(x = 26.5, xend = 38, y = -4.5, yend = -4.5), colour = "#D01C8B", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 32.25, y = -5.8, label = "FG6") +
+  geom_segment(aes(x = 22.5, xend = 26, y = -4.5, yend = -4.5), colour = "#F1B6DA", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 24.25, y = -5.8, label = "FG7") +
+  geom_segment(aes(x = 12.5, xend = 22, y = -4.5, yend = -4.5), colour = "#B8E186", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 17.25, y = -5.8, label = "FG8") +
+  geom_segment(aes(x = 6.5, xend = 12, y = -4.5, yend = -4.5), colour = "#BF812D", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 8.75, y = -5.8, label = "FG9") +
+  geom_segment(aes(x = 0, xend = 6, y = -4.5, yend = -4.5), colour = "#BB9D00", linetype = "solid", size = 3, alpha = 0.7) +
+  annotate(geom = "text", x = 3, y = -5.8, label = "FG10")
+
+# Save as tiff file Fig.S4 with a resolution of 300 ppi
+pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
+tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS5.tiff"),
+     units = "in", width = 10, height = 8, res = 300)
+print(FigS5)
+dev.off()
+```
+![Figure S5](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS5.png)
+
+## Figure S6
 ```{r, eval = FALSE}
 # Test the relationship betwwen Rao's index and metal gradient
 table_FD <- TDFD_IBC_res$TDFD_metrics[!(TDFD_IBC_res$TDFD_metrics$group == "Intermed"), ]
@@ -1287,9 +1291,9 @@ text(c(1:(nlevels(table_FD$group))) ,
      c(unique(table_FD$posthoc.FDis)), cex = 1.5)
 dev.off()
 ```
-![Figure S8](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS8.png)
+![Figure S6](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS6.png)
 
-## Figure S9
+## Figure S7
 ```{r, eval = FALSE}
 # Linear model between Rao's index and FDis
 lm1 <- lm(FD.FDis ~ RaoQ.CH.scale, data = TDFD_IBC_res$TDFD_metrics)
@@ -1315,7 +1319,7 @@ mtext(text = expression("FD"[Q]), side = 1, line = 3, cex = 1)
 mtext(text = expression("F"[Dis]), side = 2, line = 3, cex= 1)
 dev.off()
 ```
-![Figure S9](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS9.png)
+![Figure S7](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS7.png)
 
 # Version of packages used to build this document
 ```{r, eval = TRUE}
