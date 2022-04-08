@@ -11,14 +11,58 @@
 
 # ======================================== TABLE OF CONTENTS ======================================== #  
 #                                                                                                     #
-# 01. betadiv: Function to decompose taxonomic beta-diversity and test significance from null models  #
-# 02. Rao.CH: Function to calculate the FD from the Rao's quadratic entropy                           #
+# 01. Rao.CH: Function to calculate the FD from the Rao's quadratic entropy                           #
+# 02. betadiv: Function to decompose taxonomic beta-diversity and test significance from null models  #
 #                                                                                                     #
 # =================================================================================================== #
 
 
 #--------------------------------------------------------------------#
-## 01. Function to decompose taxonomic beta-diversity and test significance from null models 
+## 01. Function to calculate the functional diversity from the Rao's quandratic entropy
+##     Formule of Rao's index from Champely & Chessel [Environ. Ecol. Stat. 9, 167-177 (2002)]
+
+## WARNING ##
+## This function gives similar results that function divc in ade4
+## WARNING ##
+
+##
+# The function 'Rao.CH' runs the analysis
+# It uses three elements:
+#' @param taxa. A community matrix (C x S) with C samples (or communities) as rows, and S species as columns
+#' @param trait. A matrix or data frame (S x T) with S species as rows, and T traits as columns, must have species names as rownames
+#' @param method. whether "euclidean" method is used, dissimilarity matrix is computes from euclidean distance
+#
+# It return one element:
+#' @return Rao.FD. A data frame (C x 1) listing for each C sample the value of functional diversity
+# - low value of Rao.FD: species are functionally similar
+# - high value of Rao.FD: species are functionally distinct
+##
+
+Rao.CH <- function(taxa, trait, method = "euclidean", scale = TRUE) {
+  # calculating relative abundances
+  Tabun <- taxa / rowSums(taxa)
+  Tabun <- drop(as.matrix(Tabun))
+  
+  # matrix of functional distance among species
+  Fdist <- vegdist(trait, method = method)
+  Fdist <- as.matrix(Fdist)
+  
+  # observed rao's diversity (looping on the n sites)
+  Rao.FD <- as.data.frame(rep(0, nrow(Tabun)))
+  names(Rao.FD) <- "Rao_CH"
+  for (i in 1:nrow(Tabun)) {
+    Rao.FD[i, ] <- (t(Tabun[i, ]) %*% (Fdist^2) %*% Tabun[i, ]) / 2
+  }
+  if (scale == TRUE) {
+    raomax <- divcmax(as.dist(Fdist))$value
+    Rao.FD <- Rao.FD/raomax
+  }
+  return(Rao.FD)
+}
+
+
+#--------------------------------------------------------------------#
+## 02. Function to decompose taxonomic beta-diversity and test significance from null models 
 
 ##
 # The function 'betadiv' runs the analysis
@@ -133,50 +177,6 @@ betadiv <- function(taxa, site, method = "BR", nrepet = 999) {
     rownames(res.beta) <- names(site)[1]
   }
   return(res.beta)
-}
-
-
-#--------------------------------------------------------------------#
-## 02. Function to calculate the functional diversity from the Rao's quandratic entropy
-##     Formule of Rao's index from Champely & Chessel [Environ. Ecol. Stat. 9, 167-177 (2002)]
-
-## WARNING ##
-## This function gives similar results that function divc in ade4
-## WARNING ##
-
-##
-# The function 'Rao.CH' runs the analysis
-# It uses three elements:
-#' @param taxa. A community matrix (C x S) with C samples (or communities) as rows, and S species as columns
-#' @param trait. A matrix or data frame (S x T) with S species as rows, and T traits as columns, must have species names as rownames
-#' @param method. whether "euclidean" method is used, dissimilarity matrix is computes from euclidean distance
-#
-# It return one element:
-#' @return Rao.FD. A data frame (C x 1) listing for each C sample the value of functional diversity
-# - low value of Rao.FD: species are functionally similar
-# - high value of Rao.FD: species are functionally distinct
-##
-
-Rao.CH <- function(taxa, trait, method = "euclidean", scale = TRUE) {
-  # calculating relative abundances
-  Tabun <- taxa / rowSums(taxa)
-  Tabun <- drop(as.matrix(Tabun))
-  
-  # matrix of functional distance among species
-  Fdist <- vegdist(trait, method = method)
-  Fdist <- as.matrix(Fdist)
-  
-  # observed rao's diversity (looping on the n sites)
-  Rao.FD <- as.data.frame(rep(0, nrow(Tabun)))
-  names(Rao.FD) <- "Rao_CH"
-  for (i in 1:nrow(Tabun)) {
-    Rao.FD[i, ] <- (t(Tabun[i, ]) %*% (Fdist^2) %*% Tabun[i, ]) / 2
-  }
-  if (scale == TRUE) {
-    raomax <- divcmax(as.dist(Fdist))$value
-    Rao.FD <- Rao.FD/raomax
-  }
-  return(Rao.FD)
 }
 
 
