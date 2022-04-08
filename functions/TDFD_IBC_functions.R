@@ -20,11 +20,9 @@
 #--------------------------------------------------------------------#
 ## 01. Function to calculate the functional diversity from the Rao's quandratic entropy
 ##     Formule of Rao's index from Champely & Chessel [Environ. Ecol. Stat. 9, 167-177 (2002)]
-
 ## WARNING ##
 ## This function gives similar results that function divc in ade4
 ## WARNING ##
-
 ##
 # The function 'Rao.CH' runs the analysis
 # It uses three elements:
@@ -37,16 +35,13 @@
 # - low value of Rao.FD: species are functionally similar
 # - high value of Rao.FD: species are functionally distinct
 ##
-
 Rao.CH <- function(taxa, trait, method = "euclidean", scale = TRUE) {
   # calculating relative abundances
   Tabun <- taxa / rowSums(taxa)
   Tabun <- drop(as.matrix(Tabun))
-  
   # matrix of functional distance among species
   Fdist <- vegdist(trait, method = method)
   Fdist <- as.matrix(Fdist)
-  
   # observed rao's diversity (looping on the n sites)
   Rao.FD <- as.data.frame(rep(0, nrow(Tabun)))
   names(Rao.FD) <- "Rao_CH"
@@ -63,7 +58,6 @@ Rao.CH <- function(taxa, trait, method = "euclidean", scale = TRUE) {
 
 #--------------------------------------------------------------------#
 ## 02. Function to decompose taxonomic beta-diversity and test significance from null models 
-
 ##
 # The function 'betadiv' runs the analysis
 # It uses four elements:
@@ -75,12 +69,10 @@ Rao.CH <- function(taxa, trait, method = "euclidean", scale = TRUE) {
 # It return one element:
 #' @return res.beta. A data frame with in row the group site and in columns observed and expected (null model) value of the three component of beta diversity (i.e., total beta diversity, turnover, and nestedness)
 ##
-
 betadiv <- function(taxa, site, method = "BR", nrepet = 999) {
   require(betapart)
   require(ade4)
   require(vegan)
-  
   f1 <- function(x) {
     X <- x[x$X1 <= 4 & x$X2 >= 18, ]
     X <- apply(X, 2, function(i) mean(i))[3]
@@ -91,7 +83,6 @@ betadiv <- function(taxa, site, method = "BR", nrepet = 999) {
     X <- apply(X, 2, function(i) mean(i))
     return(X)
   }
-  
   beta.null <- vector(mode = "list", length = nrepet)
   beta.null_BC <- as.data.frame(matrix(nrow = (((1 + length(site[[1]])) * length(site[[1]])) / 2) - length(site[[1]]), ncol = nrepet))
   beta.null_BC.BAL <- as.data.frame(matrix(nrow = (((1 + length(site[[1]])) * length(site[[1]])) / 2) - length(site[[1]]), ncol = nrepet))
