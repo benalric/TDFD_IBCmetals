@@ -13,7 +13,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-# Global options
+# Global options.
 options(max.print="75")
 knitr::opts_chunk$set(echo=TRUE,
                eval=FALSE,
@@ -94,7 +94,7 @@ trait_eltonian$fresh.water <- trait_eltonian$brackish.water <-
   trait_eltonian$xenosaprobic <- trait_eltonian$oligosaprobic <- trait_eltonian$b.mesosaprobic <- 
   trait_eltonian$a.mesosaprobic <- trait_eltonian$polysaprobic <- trait_eltonian$X..4 <- trait_eltonian$X..4.4.5 <- 
   trait_eltonian$X..4.5.5 <- trait_eltonian$X..5.5.5 <- trait_eltonian$X..5.5.6 <- trait_eltonian$X..6 <- NULL
-blo_eltonian <- c(7, 2, 3, 4, 7, 4, 5, 4, 8, 9, 7) # nombre de modalites par traits
+blo_eltonian <- c(7, 2, 3, 4, 7, 4, 5, 4, 8, 9, 7) # Number of categories by biological trait
 names(blo_eltonian) <- c("Maximal potential size",
                          "Life-cycle duration",
                          "Reproductive cycles per year",
@@ -135,8 +135,6 @@ N1b2 <- 2 ^ Hb2 # Shannon diversity (base 2)
 RaoQ.CH.scale <- Rao.CH(TDFD_IBC_data$abundance[, -c(1:8)], z.trait, method = "euclidean", scale = TRUE)
 colnames(RaoQ.CH.scale) <- "RaoQ.CH.scale"
 ```
-
-
 | <span> |
 | :------------------------------------------------------------------------------------------------------------ |
 | **NOTE:** Functional dispersion is computed accroding to Laliberte & Legendre [*Ecology* **91**, 299-305 (2010)]|
@@ -175,7 +173,7 @@ Si.tidy <- scarcity_stack(com_df = abun_subg_tidy,
 ## Data preparation
 | <span> |
 | :------------------------------------------------------------------------------------------------------------ |
-| **WARNING:** Please go to the Figure 2 section to see how group-specific taxa (i.e., taxa.Si.G1, taxa.Si.G3, taxa.Si.common) were estimated |
+| **WARNING:** Please go to the Figure 2 section to see how group-specific taxa (i.e., taxa.Si.G1, taxa.Si.G3 and taxa.Si.common) were estimated |
 | <span> |
 ```{r, eval = FALSE}
 # Create name vector for taxa either specifc to UnCont1 and Cont or commun to both
@@ -191,20 +189,17 @@ taxa.Si.common <- c("Gammarus", "Chironomidae", "Corbicula", "Asellidae", "Echin
 ```
 
 ```{r, eval = FALSE}
-# Abundance tables to estimate the contribution of each species to the trait space occupied by the community 
+# Abundance tables to estimate the contribution of each species to the trait space occupied by the community
 comm_UnCont1_contrib <- TDFD_IBC_data$abundance[TDFD_IBC_data$abundance$group == "UnCont1" , colnames(TDFD_IBC_data$abundance) %in% taxa.Si.G1 | colnames(TDFD_IBC_data$abundance) %in% taxa.Si.common]
 comm_Cont_contrib <- TDFD_IBC_data$abundance[TDFD_IBC_data$abundance$group == "Cont", colnames(TDFD_IBC_data$abundance) %in% taxa.Si.G3 | colnames(TDFD_IBC_data$abundance) %in% taxa.Si.common]
-
 # Abundance tables to estimate the beta functional diversity
 comm_UnCont1_Eq <- TDFD_IBC_data$abundance[TDFD_IBC_data$abundance$group == "UnCont1", colnames(TDFD_IBC_data$abundance) %in% taxa.Si.G1]
 comm_Cont_Eq <- TDFD_IBC_data$abundance[TDFD_IBC_data$abundance$group == "Cont", colnames(TDFD_IBC_data$abundance) %in% taxa.Si.G3]
 comm_UnCont1_Cont_Eq <- TDFD_IBC_data$abundance[TDFD_IBC_data$abundance$group == "UnCont1" | TDFD_IBC_data$abundance$group == "Cont", colnames(TDFD_IBC_data$abundance) %in% taxa.Si.G1 | colnames(TDFD_IBC_data$abundance) %in% taxa.Si.G3]
 comm_UnCont1_Cont_Eq <- comm_UnCont1_Cont_Eq[, colSums(comm_UnCont1_Cont_Eq) != 0]
-
 # Trait tables for contribution analysis
 trait_UnCont1_contrib <- TDFD_IBC_data$trait[rownames(TDFD_IBC_data$trait) %in% colnames(comm_UnCont1_contrib), ]
 trait_Cont_contrib <- TDFD_IBC_data$trait[rownames(TDFD_IBC_data$trait) %in% colnames(comm_Cont_contrib), ]
-
 # Trait tables for beta diversity analysis
 trait_UnCont1_Eq <- TDFD_IBC_data$trait[rownames(TDFD_IBC_data$trait) %in% colnames(comm_UnCont1_Eq), ]
 trait_Cont_Eq <- TDFD_IBC_data$trait[rownames(TDFD_IBC_data$trait) %in% colnames(comm_Cont_Eq), ]
@@ -216,7 +211,6 @@ trait_Cont_Eq <- TDFD_IBC_data$trait[rownames(TDFD_IBC_data$trait) %in% colnames
 ```{r, eval = FALSE}
 # Select the Eltonian traits
 trait_eltonian_Eq <- trait_Cont_Eq # CHANGE ME with the good table
-
 trait_eltonian_Eq$fresh.water <- trait_eltonian_Eq$brackish.water <- 
   trait_eltonian_Eq$river.channel <- trait_eltonian_Eq$banks..connected.side.arms <-
   trait_eltonian_Eq$ponds..pools..disconnected.side.arms <- trait_eltonian_Eq$marshes..peat.bogs <-
@@ -246,8 +240,7 @@ names(blo_eltonian) <- c("Maximal potential size",
                          "Food",
                          "Feeding type")
 trait_eltonian_Eq <- prep.fuzzy.var(trait_eltonian_Eq, col.blocks = blo_eltonian)
-
-## Scaling and centering fuzzy data
+# Scaling and centering fuzzy data
 z.trait_UnCont1_contrib <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
 z.trait_Cont_contrib <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
 z.trait_UnCont1_Eq <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
@@ -263,7 +256,6 @@ z.trait_Cont_Eq <- scale(trait_eltonian_Eq, center = TRUE, scale = TRUE)
 # Converting traits in a distance matrix (euclidean distance)
 e.dist_UnCont1_Eq <- vegdist(z.trait_UnCont1_Eq, method = "euclidean", na.rm = TRUE)
 e.dist_Cont_Eq <- vegdist(z.trait_Cont_Eq, method = "euclidean", na.rm = TRUE)
-
 # Apportionment of diversity according to the third approach of Pavoine et al (Meth.Ecol.Evol. 2016)
 EqRao_eq_UnCont1 <- EqRao(comm = comm_UnCont1_Eq, dis = e.dist_UnCont1_Eq, , formula = "EDI", option = "eq")
 EqRao_normed1_UnCont1 <- EqRao(comm_UnCont1_Eq, e.dist_UnCont1_Eq, , formula = "EDI", option = "normed1")
@@ -271,7 +263,6 @@ EqRao_normed2_UnCont1 <- EqRao(comm_UnCont1_Eq, e.dist_UnCont1_Eq, , formula = "
 EqRao_eq_Cont <- EqRao(comm_Cont_Eq, e.dist_Cont_Eq, , formula = "EDI", option = "eq")
 EqRao_normed1_Cont <- EqRao(comm_Cont_Eq, e.dist_Cont_Eq, , formula = "EDI", option = "normed1")
 EqRao_normed2_Cont <- EqRao(comm_Cont_Eq, e.dist_Cont_Eq, , formula = "EDI", option = "normed2")
-
 # Table of the estimation of beta functional diversity
 EqRao_res <- as.data.frame(matrix(0, nrow = 6, ncol = 3))
 colnames(EqRao_res) <- c("group_site", "normalization", "beta")
@@ -283,80 +274,65 @@ EqRao_res$beta <- c(EqRao_eq_UnCont1$`Equivalent numbers`[1],
                     EqRao_eq_Cont$`Equivalent numbers`[1],
                     EqRao_normed1_Cont$`Normed contributions to diversity`,
                     EqRao_normed2_Cont$`Normed contributions to diversity`)
-
-# Converting traits to a distance matrix (euclidean distance) and transforming them with a PCoA
-# Step nedd to compute the contribution, originality and evenness of each species to the trait space occupied by their community
+# Converting traits to a distance matrix (euclidean distance) and transforming them with a PCoA #
+# Step need to compute the contribution and originality of each species to the trait space occupied by their community
 e.dist_UnCont1_contrib <- vegdist(z.trait_UnCont1_contrib, method = "euclidean", na.rm = TRUE)
 e.dist_Cont_contrib <- vegdist(z.trait_Cont_contrib, method = "euclidean", na.rm = TRUE)
 pcoa_UnCont1_contrib <- pcoa(e.dist_UnCont1_contrib, correction = "cailliez")
 pcoa_Cont_contrib <- pcoa(e.dist_Cont_contrib, correction = "cailliez")
-
-# hierachical clustering form the output of each PCoA
+# Hierarchical clustering form the output of each PCoA
 tree_UnCont1_contrib <- hclust(dist(pcoa_UnCont1_contrib$vectors[, c(1, 2)]), method = "ward.D2")
 tree_Cont_contrib <- hclust(dist(pcoa_Cont_contrib$vectors[, c(1, 2)]), method = "ward.D2")
-
 # Computing the contribution of each species to the trait space occupied by their community
 contrib_UnCont1 <- contribution(comm_UnCont1_contrib, tree_UnCont1_contrib, abun = TRUE, relative = TRUE)
 rownames(contrib_UnCont1) <- rownames(comm_UnCont1_contrib)
 colnames(contrib_UnCont1) <- colnames(comm_UnCont1_contrib)
-
 contrib_Cont <- contribution(comm_Cont_contrib, tree_Cont_contrib, abun = TRUE, relative = TRUE)
 rownames(contrib_Cont) <- rownames(comm_Cont_contrib)
 colnames(contrib_Cont) <- colnames(comm_Cont_contrib)
-
 # Contribution of each species
 contrib1_UnCont1 <- NULL
 for (i in 1:ncol(contrib_UnCont1)) {
   contrib1_UnCont1 <- c(contrib1_UnCont1, mean(contrib_UnCont1[, i] , na.rm = TRUE))
 }
 contrib1_UnCont1 <- data.frame(taxa = colnames(comm_UnCont1_contrib), contribution = contrib1_UnCont1)
-
 contrib1_Cont <- NULL
 for (i in 1:ncol(contrib_Cont)) {
   contrib1_Cont <- c(contrib1_Cont, mean(contrib_Cont[, i] , na.rm = TRUE))
 }
 contrib1_Cont <- data.frame(taxa = colnames(comm_Cont_contrib), contribution = contrib1_Cont)
-
 # Mean contribution
 contrib_mean_UnCont1 <- mean(contrib1_UnCont1$contribution[contrib1_UnCont1$taxa %in% taxa.Si.G1])
 contrib_mean_common_UnCont1 <- mean(contrib1_UnCont1$contribution[contrib1_UnCont1$taxa %in% taxa.Si.common])
 contrib_mean_UnCont1_perct <- (contrib_mean_UnCont1 * 100) / (contrib_mean_common_UnCont1 + contrib_mean_UnCont1)
-
 contrib_mean_Cont <- mean(contrib1_Cont$contribution[contrib1_Cont$taxa %in% taxa.Si.G3])
 contrib_mean_common_Cont <- mean(contrib1_UnCont1$contribution[contrib1_Cont$taxa %in% taxa.Si.common])
 contrib_mean_Cont_perct <- (contrib_mean_Cont * 100) / (contrib_mean_common_Cont + contrib_mean_Cont)
-
 # Computing the originality of each species to the trait space occupied by their community
 orig_UnCont1 <- BAT::originality(comm_UnCont1_contrib, tree_UnCont1_contrib, abund = TRUE)
 rownames(orig_UnCont1) <- rownames(comm_UnCont1_contrib)
 colnames(orig_UnCont1) <- colnames(comm_UnCont1_contrib)
-
 orig_Cont <- BAT::originality(comm_Cont_contrib, tree_Cont_contrib, abund = TRUE)
 rownames(orig_Cont) <- rownames(comm_Cont_contrib)
 colnames(orig_Cont) <- colnames(comm_Cont_contrib)
-
 # Originality of each species
 orig1_UnCont1 <- NULL
 for (i in 1:ncol(orig_UnCont1)) {
   orig1_UnCont1 <- c(orig1_UnCont1, mean(orig_UnCont1[, i] , na.rm = TRUE))
 }
 orig1_UnCont1 <- data.frame(taxa = colnames(comm_UnCont1_contrib), orig = orig1_UnCont1)
-
 orig1_Cont <- NULL
 for (i in 1:ncol(orig_Cont)) {
   orig1_Cont <- c(orig1_Cont, mean(orig_Cont[, i] , na.rm = TRUE))
 }
 orig1_Cont <- data.frame(taxa = colnames(comm_Cont_contrib), orig = orig1_Cont)
-
 # Mean originality
 orig_mean_UnCont1 <- mean(orig1_UnCont1$orig[orig1_UnCont1$taxa %in% taxa.Si.G1])
 orig_mean_common_UnCont1 <- mean(orig1_UnCont1$orig[orig1_UnCont1$taxa %in% taxa.Si.common])
 orig_mean_UnCont1_perct <- (orig_mean_UnCont1 * 100) / (orig_mean_common_UnCont1 + orig_mean_UnCont1)
-
 orig_mean_Cont <- mean(orig1_Cont$orig[orig1_Cont$taxa %in% taxa.Si.G3])
 orig_mean_common_Cont <- mean(orig1_Cont$orig[orig1_Cont$taxa %in% taxa.Si.common])
 orig_mean_Cont_perct <- (orig_mean_Cont * 100) / (orig_mean_common_Cont + orig_mean_Cont)
-
 # Building table with fucntional contribution and funcitonal originality
 FD_contrib_orig <- as.data.frame(matrix(0, nrow = 2, ncol = 3))
 colnames(FD_contrib_orig) <- c("group_site", "contribution", "originality")
@@ -377,23 +353,19 @@ save(TDFD_IBC_res, file = "C:/Users/benjamin/Documents/TDFD_IBCmetals/data/TDFD_
 ## Figure 1
 | <span> |
 | :------------------------------------------------------------------------------------------------------------ |
-| **NOTE:** This figure is composed to 4 panels: <br/>   Panel A: Map of study watershed (Adoure-Garonne) with hydrographic network, sampling sites and insert of the France map <br/r> Panel B: Plot of Shannon diversity along the metal contamination gradient (with quantile regression results) <br/> Panel C: Plot of Rao's index in UnCont1, UnCont2, and Cont group of sites (with anova results|
+| **NOTE:** This figure is composed to 4 panels: <br/>   Panel A: Map of study watershed (Adoure-Garonne) with hydrographic network, sampling sites and insert of the France map <br/r> Panel B: Plot of Shannon diversity along the metal contamination gradient (with quantile regression results) <br/> Panel C: Plot of Rao's index in UnCont1, UnCont2, and Cont group of sites (with anova results)|
 | <span> |
-
 ### Figure 1 - Panel A
 ```{r, eval = FALSE}
 # Set file paths where shape files will be load
-pathSHP <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/data/QGIS_shp_france"
-
+pathSHP <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/data/QGIS_shp_france" # CHANGE ME to where you want data's file to be load
 # Load shape files
 AG <- readOGR(dsn = paste0(pathSHP, "/contours_adoure_garonne"), layer = "contours_adoure_garonne")
 network <- readOGR(dsn = paste0(pathSHP, "/network_AG"), layer = "select_stream")
 agence1 <- readOGR(dsn = paste0(pathSHP, "/contours_agences"), layer = "agences_lam93")
 agence1@data$color <- c("grey40", "white", "white", "white", "white", "white")
-
 # Rename "X_L93" and "Y_L93" columns in "long" and "lat" to add sampling sites to the map
 names(TDFD_IBC_data$abundance)[3:4] <- c("long", 'lat')
-
 # Map of Adoure-Garonne region with hydrographic network
 AG_hydro <- ggplot(data = AG, aes(long, lat, group = group)) +
   geom_polygon(fill = 'gray90', color = "black") +
@@ -401,28 +373,24 @@ AG_hydro <- ggplot(data = AG, aes(long, lat, group = group)) +
   geom_point(data = TDFD_IBC_data$abundance) +
   xlab("Longitude") +
   ylab("Latitude") +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid = element_blank(),
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_text(size = 12)) +
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) +
   labs(tag = "A") +
   ggspatial::annotation_north_arrow(location="tl", height = unit(.75, "cm"),
                                     style = ggspatial::north_arrow_orienteering(text_size = 8),
                                     width = unit(.5, "cm"), pad_y = unit(0.4, "cm")) +
   ggspatial::annotation_scale(location="bl", 
                               pad_x = unit(1, "cm"), text_cex = 0.8, height = unit(0.2, "cm"))
-
-# Map of France with boundaries of six watersheds 
+# Map of France with boundaries of six watersheds
 agence2 <- st_as_sf(agence1)
 agence3 <- as_tibble(agence2)
 map_FR <- ggplot(data = agence3, aes(geometry = geometry)) +
   geom_sf(fill = agence3$color) +
   coord_sf(datum = NA) +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid = element_blank())
-
 # Map of Adoure-Garonne region with the France map in insert
 Fig1A <- AG_hydro +
   annotation_custom(grob = ggplotGrob(map_FR),
@@ -431,7 +399,6 @@ Fig1A <- AG_hydro +
                     ymin = 6150000,
                     ymax = 6300000)
 ```
-
 ### Figure 1 - Panel B
 ```{r, eval = FALSE}
 # Quantile regression
@@ -446,7 +413,6 @@ AIC(fit_rq_shannon) # 122.5254
 AIC(fit_nlrq_shannon) # 122.6316
 predicted_rq_shannon <- data.frame(IBCmetals = TDFD_IBC_res$TDFD_metrics$IBCmetals, pred = pred_rq_shannon)
 pv_fit_rq <- summary(fit_rq_shannon, se = "boot")$coefficients["IBCmetals", "Pr(>|t|)"] # p.value = 0.0131
-
 # Plot of the Shannon index against metal contamination gradient
 TDFD_IBC_res$TDFD_metrics$color[TDFD_IBC_res$TDFD_metrics$color == "#000000"] <- "#FFFFFF"
 par(mar = c(5, 0, 3, 5))
@@ -454,12 +420,10 @@ Fig1B <- ggplot(TDFD_IBC_res$TDFD_metrics, aes(x = IBCmetals, y = N1b2)) +
   geom_point(shape = 1, size = 4, color = TDFD_IBC_res$TDFD_metrics$color) +
   geom_point(shape = 19, size = 1.5) + 
   geom_line(color = "black", data = predicted_rq_shannon, aes(x = IBCmetals, y = pred)) +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid = element_blank(),
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_text(size = 12)) +
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) +
   xlab(expression("IBC"[metals])) +
   ylab("Shannon diversity index") +
   labs(tag = "B") +
@@ -478,43 +442,36 @@ Fig1B <- ggplot(TDFD_IBC_res$TDFD_metrics, aes(x = IBCmetals, y = N1b2)) +
            size = 3, 
            hjust = 0)
 ```
-
 ### Figure 1 - Panel C
 ```{r, eval = FALSE}
-# Test the relationship betwwen Rao's index and metal gradient
+# Test the relationship between Rao's index and metal gradient
 table_FD <- TDFD_IBC_res$TDFD_metrics[!(TDFD_IBC_res$TDFD_metrics$group == "Intermed"), ]
 table_FD$group <- as.factor(table_FD$group)
 table_FD$group <- factor(table_FD$group, levels(table_FD$group)[c(3, 4, 1)])
-
 # Test homoscedaticity of variances (levene test) #
 # if p.value > 0.05 we have homoscedasticity and we can make classical anova [aov()] #
 # if p.value < 0.05 we have heteroscedasticity and we can make modified anova, i.e. Welch-anova [userfriendlyscience::oneway()]
 leven.Rao.CH.scale <- car::leveneTest(RaoQ.CH.scale ~ as.factor(group), data = table_FD) # p.value = 0.2634, thus we can made classical anova
-
 # Test the group effect on Rao's index
 aov.rao <- aov(table_FD$RaoQ.CH.scale ~ table_FD$group)
 summary(aov.rao) # p.value = 0.799
 aov.rao.posthoc <- TukeyHSD(aov.rao)
 table_FD$posthoc.Rao.CH.scale <- "a"
-
 # Table with the mean values of RaoQ's index for each group of sites
 mean_RaoQ <- table_FD %>%
   group_by(group) %>%
   summarize(mean_RaoQ.CH.scale = mean(RaoQ.CH.scale)) %>%
   rename(RaoQ.CH.scale = mean_RaoQ.CH.scale)
-
 # Plot Rao's index for UnCont1, UnCont2, and Cont group of sites
 Fig1C <- ggplot(table_FD, aes(x = group, y = RaoQ.CH.scale, color = group)) +
   geom_point(data = mean_RaoQ, size = 4, shape = 17, alpha = 0.8, color = "black") +
   geom_point() +
   scale_color_manual(values = c("#0066CC", "#00CC00", "#FF0000")) +
   ylim(c(0, 1)) +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid = element_blank(),
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14),
         legend.position = "none") +
   xlab("") +
   ylab(expression("FD"[Q])) +
@@ -524,7 +481,6 @@ Fig1C <- ggplot(table_FD, aes(x = group, y = RaoQ.CH.scale, color = group)) +
            y = 0.8,
            label = c("a", "a", "a"))
 ````
-
 ### Figure 1 - Panels A-B-C
 ```{r, eval = FALSE}
 # Let's glue the different plots together to build Fig1
@@ -534,24 +490,23 @@ design <- c(
   area(4, 1, 4, 1),
   area(1, 2, 2, 2),
   area(3, 2, 4, 2)
-)
+# Build Fig.1
 Fig1 <- plot_spacer() + Fig1A + plot_spacer() + Fig1B + Fig1C +
   plot_layout(design = design, widths = c(0.5, 0.5), heights = c(0.5, 0.5, 0.5))
-
-# Save as tiff file Fig1 with a resolution of 300 ppi
+# Save as png file Fig1 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_Fig1.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_Fig1.png"),
+     units = "in", width = 10, height = 8, res = 800)
 print(Fig1)
 dev.off()
 ```
 
-![Figure 1](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_Fig1.png)
+![Figure 1](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_Fig1.png)
 
 ## Figure 2
 | <span> |
 | :------------------------------------------------------------------------------------------------------------ |
-| **NOTE:** This part is based on the scarcity table calculated at the section 10 'Computation of scarcity at local scale' of this tutorial |
+| **NOTE:** This part is based on the scarcity table calculated at the section 10 'Computation of scarcity at local scale' of this tutorial <br/> This figure is composed to 2 panels: <br/> Panel A: Species sorted according to their average values of 1-scarcity in the group of uncontaminated sites (UnCont1) <br/> Panel B: Species sorted according to their average values of 1-scarcity in the group of contaminated sites (Cont)|
 | <span> |
 ```{r, eval = FALSE}
 # Add occurrence color to scarcity table of UnCont1 and Cont
@@ -561,7 +516,6 @@ Si.G1 <- Si.G1 %>%
 Si.G3 <- Si.G3 %>%
   mutate(occurrence.color = ifelse(Si.G3$species %in% taxa.Si.G3, "#FF6666",
                                    ifelse(Si.G3$species %in% taxa.Si.common, "#404040", "#CCCCCC")))
-
 # Add stars of taxa names
 Si.G3$new.names.species <- as.character(Si.G3$species)
 Si.G3$new.names.species[Si.G3$new.names.species == "Hydroptila"] <- paste0("**", Si.G3$new.names.species[Si.G3$new.names.species == "Hydroptila"])
@@ -579,7 +533,6 @@ Si.G3$new.names.species[Si.G3$new.names.species == "Leptophlebiidae"] <- paste0(
 Si.G3$new.names.species[Si.G3$new.names.species == "Tabanidae"] <- paste0("**", Si.G3$new.names.species[Si.G3$new.names.species == "Tabanidae"])
 Si.G3$new.names.species <- as.factor(Si.G3$new.names.species)
 Si.G3$new.names.species <- factor(Si.G3$new.names.species, levels = Si.G3$new.names.species)
-
 Si.G1$Si.G3 <- -0.1
 for (i in 1:nrow(Si.G1)) {
   for (j in 1:nrow(Si.G3.40perc)) {
@@ -616,57 +569,65 @@ Si.G1$new.names.species <- factor(Si.G1$new.names.species, levels = Si.G1$new.na
 Si.G1 <- Si.G1 %>%
   mutate(Si.G3.color = ifelse(Si.G1$Si.G3 != 0, "#E69F00", "#FFFFFF")) %>%
   mutate(Si.G3.shape = ifelse(Si.G1$Si.G3 != 0, 17, 19)) %>%
-  mutate(Si.G3.size = ifelse(Si.G1$Si.G3 !=0, 2, 0)) 
-
-# Plot for UnCont1
+  mutate(Si.G3.size = ifelse(Si.G1$Si.G3 !=0, 2, 0))
+```
+### Figure 2 - Panel A
+```{r, eval = FALSE}
 scarcity.g1 <- ggplot(Si.G1, aes(x = Si, y = new.names.species)) + 
-  geom_point() +
-  geom_point(data = Si.G1, aes(x = Si.G3, y = new.names.species), color = as.character(Si.G1$Si.G3.color), size = Si.G1$Si.G3.size, shape = Si.G1$Si.G3.shape) +
-  theme_bw() +
-  theme(axis.text.y = element_text(color = Si.G1$occurrence.color, size = 7),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_blank()) +
+  geom_point(size = 2.5) +
+  geom_point(data = Si.G1, aes(x = Si.G3, y = new.names.species), color = as.character(Si.G1$Si.G3.color), size = (Si.G1$Si.G3.size + 0.5), shape = Si.G1$Si.G3.shape) +
+  theme_bw(base_size = 16) +
+  theme(axis.text.y = element_text(color = Si.G1$occurrence.color, size = 15),
+        axis.text.x = element_text(size = 15),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
   labs(x = "1 - scarcity") +
   ylab("Species") +
   geom_hline(yintercept = 33.5, color = "#000000", linetype = "dashed", size = 1) + #40perc
   xlim(0, 1) +
   labs(tag = "A")
-
-# Plot for Cont
+```
+### Figure 2 - Panel B
+```{r, eval = FALSE}
 scarcity.g3 <- ggplot(Si.G3, aes(x = Si, y = new.names.species)) + 
-  geom_point() +
-  theme_bw() +
-  theme(axis.text.y = element_text(color = Si.G3$occurrence.color, size = 7), 
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_blank()) +
+  geom_point((size = 2.5) +
+  theme_bw(base_size = 16) +
+  theme(axis.text.y = element_text(color = Si.G3$occurrence.color, size = 15),
+        axis.text.x = element_text(size = 15),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
   labs(x = "1 - scarcity") +
   ylab("Species") +
   geom_hline(yintercept = 28.5, color = "#000000", linetype = "dashed", size = 1) + #40perc
   xlim(0, 1) +
   labs(tag = "B")
-
+```
+### Figure 2 - Panels A-B
+```{r, eval = FALSE}
+# Let's glue the different plots together to build Fig.2
 design <- c(
   area(1, 1, 1),
   area(1, 2, 1)
 )
-plot(design)
-
 # Build Fig.2
 Fig2 <- scarcity.g1 + scarcity.g3 +
   plot_layout(design = design, widths = c(1, 1), heights = c(1, 1))
-
-# Save as tiff file Fig.2 with a resolution of 300 ppi
+# Save as png file Fig.2 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_Fig2.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_Fig2.png"),
+     units = "in", width = 16, height = 16, res = 800)
 print(Fig2)
 dev.off()
 ```
-![Figure 2](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_Fig2.png)
+![Figure 2](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_Fig2.png)
 
 ## Figure 3 
+| <span> |
+| :------------------------------------------------------------------------------------------------------------ |
+| **NOTE:** This figure is composed to 2 panels: <br/> Panel A: Principal Coordinate Analysis based on Euclidean distance representing the functional space of macroinvertebrates <br/r> Panel B: Functional contribution and functional originamity for dominant species|
+| <span> |
 ### Figure 3 - Panel A
 ```{r, eval = FALSE}
 # PCoA on the distance matrix computes from trait table
@@ -676,13 +637,11 @@ X11()
 plot(hc.pcoa, hang = -1)
 rect.hclust(hc.pcoa, k = 10)
 fac <- cutree(hc.pcoa, k = 10)
-
 # Transform abundance table in tidy format
 abun_ibc.tidy <- TDFD_IBC_data$abundance %>% gather(key = "taxa", value = "abun", 9:(ncol(TDFD_IBC_data$abundance)))
 abun_ibc.tidy <- abun_ibc.tidy[abun_ibc.tidy$abun !=0, ]
 abun_ibc.tidy.G1 <- abun_ibc.tidy[abun_ibc.tidy$group == "UnCont1", ]
 abun_ibc.tidy.G3 <- abun_ibc.tidy[abun_ibc.tidy$group == "Cont", ]
-
 # Harmonization of scarcity tidy table
 Si_global <- Si.tidy %>%
   mutate(group.site = ifelse(Si.tidy$site %in% TDFD_IBC_data$abundance$cd_opecont[TDFD_IBC_data$abundance$group == "UnCont1"], "UnCont1",
@@ -697,22 +656,18 @@ Si_global <-   Si_global %>%
                                           ifelse(Si_global$species %in% TDFD_IBC_data$info_species$species[TDFD_IBC_data$info_species$group_site == "Common"], "#999999", NA)))) %>%
   arrange(Si) %>%
   as.data.frame()
-
 # Select taxa specific to UnCont1 with value > to 40th percentile
 Si.G1 <- Si_global[Si_global$group.site == "UnCont1", ]
 Si.G1$species <- factor(Si.G1$species, levels = Si.G1$species)
 Si.G1.40perc <- Si.G1[Si.G1$Si >= quantile(Si.G1$Si, probs = seq(0, 1, 0.1))[5], ]
-
 # Select taxa specific to Cont with scarcity > to 40th percentile
 Si.G3 <- Si_global[Si_global$group.site == "Cont", ]
 Si.G3$species <- factor(Si.G3$species, levels = Si.G3$species)
 Si.G3.40perc <- Si.G3[Si.G3$Si >= quantile(Si.G3$Si, probs = seq(0, 1, 0.1))[5], ]
-
 # Identify specific taxa to Uncont1 and Cont and common to both with scarcity > to 40th percentile
 taxa.Si.G1 <- setdiff(Si.G1.40perc$species, Si.G3.40perc$species)
 taxa.Si.G3 <- setdiff(Si.G3.40perc$species, Si.G1.40perc$species)
 taxa.Si.common <- intersect(Si.G3.40perc$species, Si.G1.40perc$species)
-
 # Add information to the PCoA table need to perform Fig.3
 pcoa1 <- data.frame(species = rownames(pcoa0$vectors), pcoa0$vectors[, c(1:2)])
 pcoa1 <- pcoa1 %>%
@@ -752,42 +707,36 @@ pcoa1$clust <- factor(pcoa1$clust, levels = c("FG1", "FG2", "FG3", "FG4", "FG5",
 pcoa1$clust.color <- factor(pcoa1$clust.color, levels = unique(pcoa1$clust.color)[c(10, 9, 8, 3, 1, 4, 7, 5, 6, 2)])
 pcoa1$Si.40perc.color <- factor(pcoa1$Si.40perc.color, levels = unique(pcoa1$Si.40perc.color)[c(2, 1, 3, 4)])
 pcoa1$Si.40perc.occurrence <- factor(pcoa1$Si.40perc.occurrence, levels = unique(pcoa1$Si.40perc.occurrence)[c(2, 1, 3, 4)])
-
 # Estimation of the convex hull for each functional group according to the first two axis of PCoA
 hull_hc <- pcoa1 %>%
   group_by(clust) %>%
   slice(chull(Axis.1, Axis.2))
-
-# Plot of the PCoA with convex hulles
+# Plot of the PCoA with convex hulls
 gplot.pcoa <- ggplot(pcoa1, aes(x = Axis.1, y = Axis.2)) +
   geom_point(shape = 19, size = 2, col = pcoa1$Si.40perc.color)
 gplot.pcoa <- gplot.pcoa + aes(fill = factor(clust)) + 
   geom_polygon(data = hull_hc, alpha = 0.5) +
   scale_fill_manual(values = as.character(unique(pcoa1$clust.color)[c(10, 9, 8, 3, 1, 4, 7, 5, 6, 2)])) +
   geom_point(shape = 19, size = 2, col = pcoa1$Si.40perc.color) +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid.minor = element_blank(),
         legend.position = "none",
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_text(size = 12)) +
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) +
   ylim(-7.5, 5) +
   labs(x = "PCoA axis 1", y = "PCoA axis 2") +
   geom_text(x = 1.5, y = -4.5, label = "FG2", size = 4) +
   geom_segment(aes(x = 1.2, xend = 0.9, y = -4.5, yend = -4.8), colour = "black", linetype = "solid")
-
 # Legend of the UnCont1, Cont, Common, and Rare species
 legend_occurrence_plot <- ggplot(pcoa1, aes(x = Axis.1, y = Axis.2, color = Si.40perc.occurrence)) +
   geom_point(size = 2) + 
   scale_color_manual(values = levels(pcoa1$Si.40perc.color)) +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme_void() +
   theme(panel.grid.minor = element_blank(),
         legend.title = element_blank(),
-        legend.text = element_text(size = 12))
+        legend.text = element_text(size = 14))
 legendoccurrence <- plot_grid(get_legend(legend_occurrence_plot + theme(legend.position = "left")))
-
 # Legend of functional groups determined by cluster analysis
 legend_FG <- data.frame(site = levels(pcoa1$clust), value = "cluster", group = levels(pcoa1$clust.color))
 legend_FG$site <- factor(legend_FG$site, levels = unique(legend_FG$site))
@@ -795,16 +744,14 @@ legend_FG_plot <- ggplot(legend_FG, aes(value, group, fill = factor(site))) +
   geom_tile(alpha = 0.7) +
   theme_void() +
   theme(legend.title = element_blank(),
-        legend.text = element_text(size = 12)) +
+        legend.text = element_text(size = 14)) +
   scale_fill_manual(values = as.character(legend_FG$group), name = "Occurrence")  
 legendFG <- plot_grid(get_legend(legend_FG_plot + theme(legend.position = "left")))
-
 # Build Fig.3A
 Fig3A <- gplot.pcoa +
   annotation_custom(grob = ggplotGrob(legendoccurrence), xmin = -4, ymin = -7.65, xmax = -5.4, ymax = -5.2) +
   annotation_custom(grob = ggplotGrob(legendFG), xmin = -6.5, ymin = -7, xmax = -6.8, ymax = -2.8)
 ```
-
 ### Figure 3 - Panel B
 ```{r, eval = FALSE}
 # Preparing the table for run plot
@@ -822,28 +769,24 @@ table_percent <- data.frame(group = rep(c("UnCont1", "UnCont1", "Cont", "Cont"),
                             lab_ypos = c(95.35, 45.35, 94.95, 44.95, 75.6, 24.8, 70.2, 26.6))
 table_percent$group <- factor(table_percent$group, levels = c("UnCont1", "Cont"))
 table_percent$type <- factor(table_percent$type, levels = c("specific", "common"))
-
-# Functional contribution and functional originality for dominant species common to UnCont1 and Cont and for dominant species specific
+# Build Fig.3A
 Fig3B <- ggplot(table_percent, aes(x = group, y = values)) +
   geom_col(aes(fill = type), width = 0.7) +
   geom_text(aes(y = lab_ypos, label = values, group = type), size = 5, colour = ifelse(table_percent$lab_ypos < 49, "white", "black")) +
   scale_fill_manual(values = c("#0066CC", "#FF0000","#404040")) +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(colour = "white"),
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_text(size = 12),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 12),
-        strip.text.x = element_text(size = 12),
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 14),
+        strip.text.x = element_text(size = 14),
         legend.position = "none") +
   labs(x = "", y = "percentages") +
   facet_grid(. ~ analysis) +
   labs(tag = "B")
 ```
-
 ### Figure 3 - Panels A-B
 ```{r, eval = FALSE}
 # Let's glue the different plots together to build Fig.3
@@ -853,37 +796,38 @@ design <- c(
   area(2, 2, 4, 2),
   area(5, 2, 5, 2)
 )
+# Build Fig.3
 Fig3 <- Fig3A + plot_spacer() + Fig3B + plot_spacer() +
   plot_layout(design = design, widths = c(0.7, 0.3), heights = c(0.5, 0.5))
+# Save as png file Fig.3 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures"
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_Fig3.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_Fig3.png"),
+     units = "in", width = 10, height = 8, res = 800)
 print(Fig3)
 dev.off()
 ```
-![Figure 3](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_Fig3.png)
+![Figure 3](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_Fig3.png)
 
 ## Figure S1
 ```{r, eval = FALSE}
 # MRPP analysis
 mrpp1 <- mrpp(e.dist, fac)
 summary(mrpp1)
-
-# Save as tiff file Fig.S5 with a resolution of 300 ppi
+# Save as png file Fig.S1 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS5.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_FigS1.png"),
+     units = "in", width = 10, height = 8, res = 800)
 with(mrpp1, {
- fig.dist <- hist(boot.deltas, xlim = range(c(delta,boot.deltas)), main = "", xlab = "Delta", col = "blue")
-  mtext("MRPP (observed vs expected delta)", line = 2)
-  mtext("Obsered delta = 8.591, Expected delta = 10.7, p = < 0.0001", line = 1, cex = 0.8)
+ fig.dist <- hist(boot.deltas, xlim = range(c(delta,boot.deltas)), main = "", xlab = "Delta", col = "blue", cex.lab = 1.5, cex.axis = 1.5)
+  mtext("MRPP (observed vs expected delta)", line = 2, cex = 1.5)
+  mtext("Obsered delta = 8.591, Expected delta = 10.7, p = < 0.0001", line = 1, cex = 1.5)
   abline(v = delta, lty = "dashed", col = "red"); 
   text(delta, 2*mean(fig.dist$counts), adj = -0.5,
-       expression(bold(delta)), cex = 1.5 )  }
+       expression(bold(delta)), cex = 1.5)  }
 )
 dev.off()
 ```
-![Figure S1](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS1.png)
+![Figure S1](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_FigS1.png)
 
 ## Figure S2
 ```{r, eval = FALSE}
@@ -898,7 +842,6 @@ g7 <- trait_eltonian[rownames(trait_eltonian) %in% names(fac[fac == 5]), ]
 g8 <- trait_eltonian[rownames(trait_eltonian) %in% names(fac[fac == 7]), ]
 g9 <- trait_eltonian[rownames(trait_eltonian) %in% names(fac[fac == 2]), ]
 g10 <- trait_eltonian[rownames(trait_eltonian) %in% names(fac[fac == 6]), ]
-
 # Compute mean profil of each trait modality in each functional group
 mean.g1 <- apply(g1, 2, mean)
 mean.g2 <- apply(g2, 2, mean)
@@ -910,7 +853,6 @@ mean.g7 <- apply(g7, 2, mean)
 mean.g8 <- apply(g8, 2, mean)
 mean.g9 <- apply(g9, 2, mean)
 mean.g10 <- apply(g10, 2, mean)
-
 # Rearrange rows into columns for each functional group
 ## Functional group 1
 melt.mean.g1 <- reshape::melt(mean.g1)
@@ -921,7 +863,6 @@ melt.mean.g1$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g1$id.group <- "FG1"
 melt.mean.g1$id.trait_f <- factor(melt.mean.g1$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 ## Functional group 2
 melt.mean.g2 <- reshape::melt(mean.g2)
 melt.mean.g2$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -931,7 +872,6 @@ melt.mean.g2$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g2$id.group <- "FG2"
 melt.mean.g2$id.trait_f <- factor(melt.mean.g2$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 ## Functional group 3
 melt.mean.g3 <- reshape::melt(mean.g3)
 melt.mean.g3$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -941,7 +881,6 @@ melt.mean.g3$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g3$id.group <- "FG3"
 melt.mean.g3$id.trait_f <- factor(melt.mean.g3$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 ## Functional group 4
 melt.mean.g4 <- reshape::melt(mean.g4)
 melt.mean.g4$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -951,7 +890,6 @@ melt.mean.g4$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g4$id.group <- "FG4"
 melt.mean.g4$id.trait_f <- factor(melt.mean.g4$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 ## Functional group 5
 melt.mean.g5 <- reshape::melt(mean.g5)
 melt.mean.g5$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -961,7 +899,6 @@ melt.mean.g5$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g5$id.group <- "FG5"
 melt.mean.g5$id.trait_f <- factor(melt.mean.g5$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 ## Functional group 6
 melt.mean.g6 <- reshape::melt(mean.g6)
 melt.mean.g6$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -971,7 +908,6 @@ melt.mean.g6$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g6$id.group <- "FG6"
 melt.mean.g6$id.trait_f <- factor(melt.mean.g6$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 # Functional group 7
 melt.mean.g7 <- reshape::melt(mean.g7)
 melt.mean.g7$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -981,7 +917,6 @@ melt.mean.g7$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g7$id.group <- "FG7"
 melt.mean.g7$id.trait_f <- factor(melt.mean.g7$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 ## Functional group 8
 melt.mean.g8 <- reshape::melt(mean.g8)
 melt.mean.g8$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -989,10 +924,8 @@ melt.mean.g8$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), r
 melt.mean.g8$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:7), c(1:4), c(1:5), c(1:4),
                               c(1:8), c(1:9), c(1:7))
-
 melt.mean.g8$id.group <- "FG8"
 melt.mean.g8$id.trait_f <- factor(melt.mean.g8$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 ## Functional group 9
 melt.mean.g9 <- reshape::melt(mean.g9)
 melt.mean.g9$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -1002,7 +935,6 @@ melt.mean.g9$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g9$id.group <- "FG9"
 melt.mean.g9$id.trait_f <- factor(melt.mean.g9$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 ## Functional group 10
 melt.mean.g10 <- reshape::melt(mean.g10)
 melt.mean.g10$id.trait <- c(rep("1", 7), rep("2", 2), rep("3", 3), rep("4", 4), rep("5", 7), 
@@ -1012,12 +944,10 @@ melt.mean.g10$id.modality <- c(c(1:7), c(1:2), c(1:3), c(1:4),
                               c(1:8), c(1:9), c(1:7))
 melt.mean.g10$id.group <- "FG10"
 melt.mean.g10$id.trait_f <- factor(melt.mean.g10$id.trait, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
-
 # Merge the 10 tables in only one table
 table_tot <- rbind(melt.mean.g1, melt.mean.g2, melt.mean.g3, melt.mean.g4, melt.mean.g5,
                    melt.mean.g6, melt.mean.g7, melt.mean.g8, melt.mean.g9, melt.mean.g10)
 table_tot$id.group <- factor(as.factor(table_tot$id.group), levels(as.factor(table_tot$id.group))[c(1, 3, 4, 5, 6, 7, 8, 9, 10, 2)])
-
 # Barplot of the mean profil for each functional group
 FigS2 <- ggplot(table_tot, aes(x = as.factor(id.modality), y = value)) +
   geom_bar(stat = "identity", width = 0.8) +
@@ -1031,30 +961,28 @@ FigS2 <- ggplot(table_tot, aes(x = as.factor(id.modality), y = value)) +
   xlab("Trait modalities") +
   ylab("") +
   ylim(0, 1)
-
-# Save as tiff file Fig.S6 with a resolution of 300 ppi
+# Save as png file Fig.S2 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS6.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_FigS2.png"),
+     units = "in", width = 10, height = 8, res = 800)
 print(FigS2)
 dev.off()
 ```
-![Figure S2](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS2.png)
+![Figure S2](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_FigS2.png)
 
 ## Figure S3
 ```{r, eval = FALSE}
 sac1 <- specaccum(TDFD_IBC_data$abundance[ ,-c(1:8)], method = "exact", gamma = "jack1")
 sac2 <- specaccum(TDFD_IBC_data$abundance[ ,-c(1:8)], method = "random", gama = "jack1", permutations = 9999)
-
-# Save as tiff file Fig.S1 with a resolution of 300 ppi
+# Save as png file Fig.S1 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS1.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
-plot(sac2, ci.type = "poly", lwd = 2, ci.lty = 0, ci.col = "lightgray", ylab = "Species", las = 1)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_FigS1.png"),
+     units = "in", width = 10, height = 8, res = 800)
+plot(sac2, ci.type = "poly", lwd = 2, ci.lty = 0, ci.col = "lightgray", ylab = "Species", las = 1, cex.lab = 1.5, cex.axis = 1.5)
 boxplot(sac2, col = "yellow", add = TRUE)
 dev.off()
 ```
-![Figure S3](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS3.png)
+![Figure S3](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_FigS3.png)
 
 ## Figure S4
 ```{r, eval = FALSE}
@@ -1097,7 +1025,6 @@ pcoa2.G1G2G3 <- pcoa2.G1G2G3 %>%
 select(species, group.site, group.color, clust.color, clust, id, Axis.1, Axis.2)
 pcoa2.G1G2G3$clust <- factor(pcoa2.G1G2G3$clust, levels = c("FG1", "FG2", "FG3", "FG4", "FG5", "FG6", "FG7", "FG8", "FG9", "FG10"))
 pcoa2.G1G2G3$group.site <- factor(pcoa2.G1G2G3$group.site, levels = c("UnCont1", "UnCont2", "Cont"))
-
 # Plot of PCoA with four panels #
 # Panel A: PCoA of UnCont1 #
 # Panel B: PCoA of UnCont2 #
@@ -1107,17 +1034,16 @@ pcoa2.G1G2G3$group.site <- factor(pcoa2.G1G2G3$group.site, levels = c("UnCont1",
 hull_group <- pcoa2.G1G2G3 %>%
   group_by(group.site) %>%
   slice(chull(Axis.1, Axis.2))
-
 # Plot for UnCont1
 my_text1 <- "UnCont1"
-my_grob1 <- grid.text(my_text1, x = 0.09, y = 0.05, gp = gpar(col = "black", fontsize = 10))
+my_grob1 <- grid.text(my_text1, x = 0.09, y = 0.05, gp = gpar(col = "black", fontsize = 14))
 gplot1 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "UnCont1", ], aes(x = Axis.1, y = Axis.2)) +
   geom_point(size = 2)
 gplot1 <- gplot1 + aes(fill = factor(group.site)) + 
   geom_polygon(data = hull_group[hull_group$group.site == "UnCont1", ], alpha = 0.5) +
   scale_fill_manual(values = "#6699FF") +
   geom_point(shape = 19, size = 2, col = "black") +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid.minor = element_blank(),
         legend.title = element_blank(),
         legend.position = "none") +
@@ -1125,58 +1051,54 @@ gplot1 <- gplot1 + aes(fill = factor(group.site)) +
   xlim(-7.2, 5) +
   ylim(-5, 4) +
   annotation_custom(my_grob1)
-
 # Plot for UnCont2
 my_text2 <- "UnCont2"
-my_grob2 <- grid.text(my_text2, x = 0.09, y = 0.05, gp = gpar(col = "black", fontsize = 10))
+my_grob2 <- grid.text(my_text2, x = 0.09, y = 0.05, gp = gpar(col = "black", fontsize = 14))
 gplot2 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "UnCont2", ], aes(x = Axis.1, y = Axis.2)) +
   geom_point(size = 2)
 gplot2 <- gplot2 + aes(fill = factor(group.site)) + 
   geom_polygon(data = hull_group[hull_group$group.site == "UnCont2", ], alpha = 0.5) +
   scale_fill_manual(values = "#00BA42") +
   geom_point(shape = 19, size = 2, col = "black") +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid.minor = element_blank(),
         legend.title = element_blank(),
         legend.position = "none") +
   labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "B") +
   xlim(-7.2, 5) +
   annotation_custom(my_grob2)
-
 # Plot for Cont
 my_text3 <- "Cont"
-my_grob3 <- grid.text(my_text3, x = 0.06, y = 0.05, gp = gpar(col = "black", fontsize = 10))
+my_grob3 <- grid.text(my_text3, x = 0.06, y = 0.05, gp = gpar(col = "black", fontsize = 14))
 gplot3 <- ggplot(pcoa2.G1G2G3[pcoa2.G1G2G3$group.site == "Cont", ], aes(x = Axis.1, y = Axis.2)) +
   geom_point(size = 2)
 gplot3 <- gplot3 + aes(fill = factor(group.site)) + 
   geom_polygon(data = hull_group[hull_group$group.site == "Cont", ], alpha = 0.5) +
   scale_fill_manual(values = "#FF6666") +
   geom_point(shape = 19, size = 2, col = "black") +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid.minor = element_blank(),
         legend.title = element_blank(),
         legend.position = "none") +
   labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "C") +
   xlim(-7.2, 5) +
   annotation_custom(my_grob3)
-
 # Plot for UnCont1-UnCont2-Cont
 my_textall <- "UnCont1 vs. UnCont2 vs. Cont"
-my_groball <- grid.text(my_textall, x = 0.255, y = 0.05, gp = gpar(col = "black", fontsize = 10))
+my_groball <- grid.text(my_textall, x = 0.255, y = 0.05, gp = gpar(col = "black", fontsize = 14))
 gplotall <- ggplot(pcoa2.G1G2G3, aes(x = Axis.1, y = Axis.2)) +
   geom_point(size = 2)
 gplotall <- gplotall + aes(fill = factor(group.site)) + 
   geom_polygon(data = hull_group, alpha = 0.3) +
   scale_fill_manual(values = c("#6699FF", "#00BA42", "#FF6666")) +
   geom_point(shape = 19, size = 2, col = "black") +
-  theme_bw() +
+  theme_bw(base_size = 14) +
   theme(panel.grid.minor = element_blank(),
         legend.title = element_blank(),
         legend.position = "none") +
   labs(x = "PCoA axis 1", y = "PCoA axis 2", tag = "D") +
   xlim(-7.2, 5) +
   annotation_custom(my_groball)
-
 # Let's glue the different plots together to build Fig.S2
 design <- c(
   area(1, 1, 1),
@@ -1185,18 +1107,17 @@ design <- c(
   area(2, 2, 2)
 )
 plot(design)
-
+# Build Fig.S4
 FigS4 <- gplot1 + gplot3 + gplot2 + gplotall +
   plot_layout(design = design, widths = c(1, 1, 1, 1), heights = c(1, 1, 1, 1))
-
-# Save as tiff file Fig.S2 with a resolution of 300 ppi
+# Save as png file Fig.S4 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS4.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_FigS4.png"),
+     units = "in", width = 12, height = 10, res = 800)
 print(FigS4)
 dev.off()
 ```
-![Figure S4](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS4.png)
+![Figure S4](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_FigS4.png)
 
 ## Figure S5
 ```{r, eval = FALSE}
@@ -1206,7 +1127,7 @@ dend <- hc.pcoa %>%
   set("leaves_cex", c(1)) %>%
   set("leaves_col", "#FFFFFF") %>%
   set("labels_colors", "#404040") %>%
-  set("labels_cex", c(0.5)) %>%
+  set("labels_cex", c(0.6)) %>%
   set("branches_lwd", c(0.5)) %>%
   set("branches_lty", c(1)) %>%
   raise.dendrogram(1)
@@ -1214,6 +1135,7 @@ gdend <- as.ggdend(dend, type = "rectangle")
 gdend <- ggplot(gdend, horiz = TRUE) 
 gdend <- gdend + geom_segment(aes(x = 1, xend = 97, y = 6.5, yend = 6.5), colour = "#E69F00", linetype = "dashed")
 gdend <- gdend + ylim(max(get_branches_heights(dend)), -8)
+# Build Fig.S5
 FigS5 <- gdend +
   geom_segment(aes(x = 87.5, xend = 97, y = -4.5, yend = -4.5), colour = "#FDE725FF", linetype = "solid", size = 3, alpha = 0.7) +
   annotate(geom = "text", x = 92.25, y = -5.8, label = "FG1") +
@@ -1235,15 +1157,14 @@ FigS5 <- gdend +
   annotate(geom = "text", x = 8.75, y = -5.8, label = "FG9") +
   geom_segment(aes(x = 0, xend = 6, y = -4.5, yend = -4.5), colour = "#BB9D00", linetype = "solid", size = 3, alpha = 0.7) +
   annotate(geom = "text", x = 3, y = -5.8, label = "FG10")
-
-# Save as tiff file Fig.S4 with a resolution of 300 ppi
+# Save as png file Fig.S5 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS5.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_FigS5.png"),
+     units = "in", width = 12, height = 10, res = 800)
 print(FigS5)
 dev.off()
 ```
-![Figure S5](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS5.png)
+![Figure S5](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_FigS5.png)
 
 ## Figure S6
 ```{r, eval = FALSE}
@@ -1251,22 +1172,19 @@ dev.off()
 table_FD <- TDFD_IBC_res$TDFD_metrics[!(TDFD_IBC_res$TDFD_metrics$group == "Intermed"), ]
 table_FD$group <- as.factor(table_FD$group)
 table_FD$group <- factor(table_FD$group, levels(table_FD$group)[c(3, 4, 1)])
-
 # Test homoscedaticity of variances (levene test) #
 # if p.value > 0.05 we have homoscedasticity and we can make classical anova [aov()] #
 # if p.value < 0.05 we have heteroscedasticity and we can make modified anova, i.e. Welch-anova [userfriendlyscience::oneway()]
 leven.FD.FDis <- car::leveneTest(FD.FDis ~ as.factor(group), data = table_FD) # p.value = 0.2643, thus we can made classical anova
-
 # Test the group effect on Rao's index
 aov.FDis <- aov(table_FD$FD.FDis ~ table_FD$group)
 summary(aov.FDis) # p.value = 0.705
 aov.FDis.posthoc <- TukeyHSD(aov.FDis)
 table_FD$posthoc.FDis <- "a"
-
-# Save as tiff file Fig.S8 with a resolution of 300 ppi
+# Save as png file Fig.S6 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS8.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_FigS6.png"),
+     units = "in", width = 10, height = 8, res = 800)
 par(mar = c(5, 5, 3, 5))
 plot(1, mean(table_FD$FD.FDis[table_FD$group == "UnCont1"]),
      xlim = c(0.5, 3.5), ylim = c(0, (max(table_FD$FD.FDis) + 2)),
@@ -1291,7 +1209,7 @@ text(c(1:(nlevels(table_FD$group))) ,
      c(unique(table_FD$posthoc.FDis)), cex = 1.5)
 dev.off()
 ```
-![Figure S6](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS6.png)
+![Figure S6](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_FigS6.png)
 
 ## Figure S7
 ```{r, eval = FALSE}
@@ -1300,26 +1218,25 @@ lm1 <- lm(FD.FDis ~ RaoQ.CH.scale, data = TDFD_IBC_res$TDFD_metrics)
 summary.aov(lm1)
 summary(lm1)
 coeff.lm1 <- coefficients(lm1)
-
-# Save as tiff file Fig.S9 with a resolution of 300 ppi
+# Save as png file Fig.S7 with a resolution of 800 ppi
 pathFig <- "C:/Users/benjamin/Documents/TDFD_IBCmetals/Figures" # CHANGE ME to where you want figure to be saved
-tiff(paste0(pathFig, "/Rplot_trait_x_IBC_FigS9.tiff"),
-     units = "in", width = 10, height = 8, res = 300)
+png(paste0(pathFig, "/Rplot_trait_x_IBC_FigS7.png"),
+     units = "in", width = 10, height = 8, res = 800)
 par(mar = c(5, 5, 4, 2))
 plot(TDFD_res$RaoQ.CH.scale, TDFD_res$FD.FDis, 
      pch = 19, xlab = "", ylab = "", 
-     col = "black", cex = 1, cex.axis = 1)
+     col = "black", cex.axis = 1.5)
 lines(TDFD_res$RaoQ.CH.scale, lm1$fitted.values, col="red")
 text(0.5, 5.2, labels = bquote(y == .(round(coeff.lm1[2], 1))~"*"~FD[Q]~"-"~.(abs(round(coeff.lm1[1], 2)))),
-     adj = 0, cex = 1)
+     adj = 0, cex = 1.5)
 text(0.5, 4.95, labels = bquote(R^2 == .(round(summary(lm1)$adj.r.squared, digits = 2))), 
-     adj = 0, cex = 1)
-text(0.5, 4.65, labels = bquote(italic('p')~'=' ~.(summary(lm1)$coefficients[2, 4])), adj = 0, cex = 1)
-mtext(text = expression("FD"[Q]), side = 1, line = 3, cex = 1)
-mtext(text = expression("F"[Dis]), side = 2, line = 3, cex= 1)
+     adj = 0, cex = 1.5)
+text(0.5, 4.65, labels = bquote(italic('p')~'=' ~.(summary(lm1)$coefficients[2, 4])), adj = 0, cex = 1.5)
+mtext(text = expression("FD"[Q]), side = 1, line = 3, cex = 1.5)
+mtext(text = expression("F"[Dis]), side = 2, line = 3, cex= 1.5)
 dev.off()
 ```
-![Figure S7](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/Traits_x_IBC/TDFD_IBCmetals/figures/Rplot_trait_x_IBC_FigS7.png)
+![Figure S7](C:/Users/benjamin/Documents/Travail_BA/IRSTEA_AFB48/paper_traits/analysis_trait_x_IBCmet/Figures_vf/Rplot_trait_x_IBC_FigS7.png)
 
 # Version of packages used to build this document
 ```{r, eval = TRUE}
