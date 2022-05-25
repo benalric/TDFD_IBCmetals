@@ -173,7 +173,7 @@ Si.tidy <- scarcity_stack(com_df = abun_subg_tidy,
 ## Data preparation
 | <span> |
 | :------------------------------------------------------------------------------------------------------------ |
-| **WARNING:** Please go to the Figure 2 section to see how group-specific taxa (i.e., taxa.Si.G1, taxa.Si.G3 and taxa.Si.common) were estimated |
+| **WARNING:** Please go to the Figure 3 section to see how group-specific taxa (i.e., taxa.Si.G1, taxa.Si.G3 and taxa.Si.common) were estimated |
 | <span> |
 ```{r, eval = FALSE}
 # Create name vector for taxa either specifc to UnCont1 and Cont or commun to both
